@@ -7,7 +7,8 @@ import {
   TextStyle,
   ActivityIndicator,
 } from 'react-native';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 interface ButtonProps {
   onPress: () => void;
@@ -33,14 +34,14 @@ const Button: React.FC<ButtonProps> = ({
   icon,
 }) => {
   const getButtonStyle = (): ViewStyle => {
-    const baseStyle = {
+    const baseStyle: ViewStyle = {
       borderRadius: BORDER_RADIUS.lg,
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
     };
 
-    const sizeStyle = {
+    const sizeStyle: Record<string, ViewStyle> = {
       small: {
         paddingHorizontal: SPACING.md,
         paddingVertical: SPACING.sm,
@@ -58,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({
       },
     };
 
-    const variantStyle = {
+    const variantStyle: Record<string, ViewStyle> = {
       primary: {
         backgroundColor: COLORS.primary,
       },
@@ -84,14 +85,14 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const getTextStyle = (): TextStyle => {
-    const variantTextStyle = {
+    const variantTextStyle: Record<string, TextStyle> = {
       primary: { color: COLORS.white },
       secondary: { color: COLORS.text.primary },
       outline: { color: COLORS.primary },
       danger: { color: COLORS.white },
     };
 
-    const sizeTextStyle = {
+    const sizeTextStyle: Record<string, TextStyle> = {
       small: { fontSize: FONT_SIZES.sm },
       medium: { fontSize: FONT_SIZES.base },
       large: { fontSize: FONT_SIZES.lg },

@@ -12,7 +12,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import Header from '@components/layout/Header';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import { MENU_CATEGORIES } from '@services/mockData';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = (SCREEN_WIDTH - SPACING.lg * 2 - SPACING.md) / 2;

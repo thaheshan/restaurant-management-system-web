@@ -30,10 +30,13 @@ export const FONT_WEIGHTS = {
   medium: '500',
   semibold: '600',
   bold: '700',
-};
+} as const;
 
 export const LINE_HEIGHT = {
   tight: 1.2,
   normal: 1.4,
   relaxed: 1.6,
 };
+
+export const spacing = SPACING;
+export default SPACING;

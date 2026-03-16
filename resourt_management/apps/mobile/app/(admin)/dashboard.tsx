@@ -13,7 +13,8 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Card from '@components/ui/Card';
 import { useAdminAuth } from '@contexts/AdminAuthContext';
 import { CERTIFICATIONS, SANITIZATION_LOGS } from '@services/mockData';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 const ADMIN_SECTIONS = [
   { id: 'orders', label: 'Orders Management', icon: '📋', route: '/(admin)/orders-management' },

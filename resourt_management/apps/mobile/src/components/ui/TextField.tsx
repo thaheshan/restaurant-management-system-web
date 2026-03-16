@@ -8,7 +8,8 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 interface TextFieldProps extends TextInputProps {
   label?: string;
@@ -38,7 +39,7 @@ const TextField: React.FC<TextFieldProps> = ({
     },
     label: {
       fontSize: FONT_SIZES.sm,
-      fontWeight: '600',
+      fontWeight: FONT_WEIGHTS.semibold,
       color: COLORS.text.primary,
       marginBottom: SPACING.sm,
     },

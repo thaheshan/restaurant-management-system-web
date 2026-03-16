@@ -6,22 +6,26 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#2B7C4F"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTabletMode": false,
-      "bundleIdentifier": "com.dinesmart.app"
+      "bundleIdentifier": "com.dinesmart.app",
+      "jsEngine": "hermes"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#2B7C4F"
       },
-      "package": "com.dinesmart.app"
+      "package": "com.dinesmart.app",
+      "jsEngine": "hermes"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,7 +42,8 @@
         {
           "cameraPermission": "Allow DineSmart to access your camera"
         }
-      ]
+      ],
+      "expo-router"
     ],
     "scheme": "dinesmart"
   }

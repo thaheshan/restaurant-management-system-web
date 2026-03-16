@@ -5,7 +5,8 @@ import Header from '@components/layout/Header';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Card from '@components/ui/Card';
 import { INVENTORY_ITEMS } from '@services/mockData';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function InventoryScreen() {
   const router = useRouter();

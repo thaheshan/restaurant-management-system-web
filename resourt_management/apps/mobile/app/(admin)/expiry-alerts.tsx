@@ -6,7 +6,8 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
 import { INVENTORY_ITEMS } from '@services/mockData';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function ExpiryAlertsScreen() {
   const router = useRouter();

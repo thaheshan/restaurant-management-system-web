@@ -5,8 +5,9 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
-import { OrderStatus } from '@types/index';
-import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { OrderStatus } from '@/types';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 interface StatusTrackerProps {
   currentStatus: OrderStatus;

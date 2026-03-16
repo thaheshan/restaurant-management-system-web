@@ -7,8 +7,9 @@ import {
   Image,
   ViewStyle,
 } from 'react-native';
-import { MenuItem } from '@types/index';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { MenuItem } from '@/types';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 interface MenuItemCardProps {
   item: MenuItem;

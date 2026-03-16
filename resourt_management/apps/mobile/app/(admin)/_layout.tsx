@@ -6,7 +6,7 @@ export default function AdminLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        animationEnabled: true,
+        animation: 'default',
       }}
     >
       <Stack.Screen name="admin-login" />

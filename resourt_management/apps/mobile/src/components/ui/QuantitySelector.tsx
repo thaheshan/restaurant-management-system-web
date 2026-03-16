@@ -6,7 +6,8 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 interface QuantitySelectorProps {
   quantity: number;

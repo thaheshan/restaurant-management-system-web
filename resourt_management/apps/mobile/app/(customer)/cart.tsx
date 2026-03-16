@@ -13,7 +13,8 @@ import CartItemRow from '@components/cards/CartItemRow';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
 import { useCart } from '@contexts/CartContext';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function CartScreen() {
   const router = useRouter();

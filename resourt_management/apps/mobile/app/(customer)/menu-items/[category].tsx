@@ -15,10 +15,11 @@ import MenuItemCard from '@components/cards/MenuItemCard';
 import Button from '@components/ui/Button';
 import QuantitySelector from '@components/ui/QuantitySelector';
 import Card from '@components/ui/Card';
-import { MenuItem, CartItem } from '@types/index';
+import { MenuItem, CartItem } from '@/types';
 import { MENU_ITEMS } from '@services/mockData';
 import { useCart } from '@contexts/CartContext';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function MenuItemsScreen() {
   const router = useRouter();
@@ -85,7 +86,6 @@ export default function MenuItemsScreen() {
       paddingVertical: SPACING.md,
       borderTopWidth: 1,
       borderTopColor: COLORS.border,
-      paddingTopMargin: SPACING.lg,
     },
     priceText: {
       fontSize: FONT_SIZES.xl,

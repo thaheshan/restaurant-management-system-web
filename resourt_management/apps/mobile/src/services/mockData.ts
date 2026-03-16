@@ -1,4 +1,4 @@
-import { MenuCategory, MenuItem, InventoryItem, Certification, SanitizationLog } from '@types/index';
+import { MenuCategory, MenuItem, InventoryItem, Certification, SanitizationLog } from '@/types';
 
 // Menu Categories
 export const MENU_CATEGORIES: MenuCategory[] = [
