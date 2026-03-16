@@ -13,10 +13,11 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import QuantitySelector from '@components/ui/QuantitySelector';
 import Card from '@components/ui/Card';
-import { MenuItem, CartItem } from '@types/index';
+import { MenuItem, CartItem } from '@/types';
 import { MENU_ITEMS } from '@services/mockData';
 import { useCart } from '@contexts/CartContext';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function ProductDetailScreen() {
   const router = useRouter();
@@ -28,7 +29,6 @@ export default function ProductDetailScreen() {
 
   const [quantity, setQuantity] = useState(1);
 
-  // Find the product across all categories
   const product: MenuItem | undefined = useMemo(() => {
     for (const category in MENU_ITEMS) {
       const item = MENU_ITEMS[category].find((item) => item.id === productId);

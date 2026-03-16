@@ -14,7 +14,8 @@ import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
 import { useOrder } from '@contexts/OrderContext';
 import { useCart } from '@contexts/CartContext';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function OrderHistoryScreen() {
   const router = useRouter();

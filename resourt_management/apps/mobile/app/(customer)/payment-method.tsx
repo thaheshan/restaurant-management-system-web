@@ -14,10 +14,11 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import TextField from '@components/ui/TextField';
 import Card from '@components/ui/Card';
-import { PaymentOption } from '@types/index';
+import type { PaymentOption } from '@/types';
 import { useCart } from '@contexts/CartContext';
 import { useOrder } from '@contexts/OrderContext';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 const PAYMENT_OPTIONS: PaymentOption[] = [
   {

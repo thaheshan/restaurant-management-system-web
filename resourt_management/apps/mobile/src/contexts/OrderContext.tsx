@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Order, OrderStatus, CartItem, PaymentMethod, OrderHistoryItem } from '@types/index';
+import { Order, OrderStatus, CartItem, PaymentMethod, OrderHistoryItem } from '@/types';
 
 interface OrderContextType {
   currentOrder: Order | null;

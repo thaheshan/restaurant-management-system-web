@@ -6,7 +6,7 @@ export default function CustomerLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        animationEnabled: true,
+         animation: 'default',
       }}
     >
       <Stack.Screen name="menu-categories" />

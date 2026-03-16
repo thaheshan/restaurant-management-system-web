@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from 'react-native';
-import { CartItem } from '@types/index';
+import { CartItem } from '@/types';
 import QuantitySelector from '@components/ui/QuantitySelector';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 interface CartItemRowProps {
   item: CartItem;

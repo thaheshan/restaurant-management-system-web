@@ -6,7 +6,8 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Card from '@components/ui/Card';
 import Button from '@components/ui/Button';
 import { useAdminAuth } from '@contexts/AdminAuthContext';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function StaffProfileScreen() {
   const router = useRouter();

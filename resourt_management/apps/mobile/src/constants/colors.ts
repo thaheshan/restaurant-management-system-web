@@ -1,10 +1,7 @@
 export const COLORS = {
-  // Primary
   primary: '#2B7C4F',
   primaryLight: '#4A9E6F',
   primaryDark: '#1F5A38',
-
-  // Neutrals
   white: '#FFFFFF',
   black: '#1A1A1A',
   gray: {
@@ -16,14 +13,10 @@ export const COLORS = {
     500: '#666666',
     600: '#4D4D4D',
   },
-
-  // Status Colors
   success: '#4CAF50',
   warning: '#FF9800',
   error: '#F44336',
   info: '#2196F3',
-
-  // Semantic
   background: '#FFFFFF',
   surface: '#F8F8F8',
   border: '#EEEEEE',
@@ -33,10 +26,7 @@ export const COLORS = {
     tertiary: '#999999',
     inverse: '#FFFFFF',
   },
-
-  // Badge Colors
   fresh: '#4CAF50',
-  warning: '#FF9800',
   expired: '#F44336',
 };
 
@@ -52,3 +42,7 @@ export const ORDER_STATUS_COLORS = {
   'in-progress': '#FF6F00',
   served: '#4CAF50',
 };
+
+// Aliases for backward compatibility
+export const colors = COLORS;
+export default COLORS;

@@ -15,8 +15,9 @@ import StatusTracker from '@components/cards/StatusTracker';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
 import { useOrder } from '@contexts/OrderContext';
-import { OrderStatus } from '@types/index';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import type { OrderStatus } from '@/types';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function OrderTrackingScreen() {
   const router = useRouter();
@@ -141,7 +142,7 @@ export default function OrderTrackingScreen() {
         setStatus(nextStatus);
         updateOrderStatus(orderId, nextStatus);
       }
-    }, 5000); // Change status every 5 seconds for demo
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [status]);
@@ -220,10 +221,11 @@ export default function OrderTrackingScreen() {
             </>
           ) : (
             <Button
-              title="Preparing... (Status auto-updates)"
-              size="large"
-              disabled
-            />
+                title="Preparing... (Status auto-updates)"
+                size="large"
+                disabled onPress={function (): void {
+                  throw new Error('Function not implemented.');
+                } }            />
           )}
         </View>
       </SafeAreaContainer>

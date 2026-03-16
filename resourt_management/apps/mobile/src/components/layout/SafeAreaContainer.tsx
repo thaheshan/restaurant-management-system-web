@@ -3,18 +3,17 @@ import {
   View,
   StyleSheet,
   ViewStyle,
-  SafeAreaView,
   ScrollViewProps,
   ScrollView,
 } from 'react-native';
-import { COLORS, SPACING } from '@constants/spacing';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { COLORS } from '@constants/colors';
 
 interface SafeAreaContainerProps {
   children: React.ReactNode;
   style?: ViewStyle;
   scrollable?: boolean;
   scrollProps?: ScrollViewProps;
-  padding?: number;
 }
 
 const SafeAreaContainer: React.FC<SafeAreaContainerProps> = ({
@@ -22,21 +21,7 @@ const SafeAreaContainer: React.FC<SafeAreaContainerProps> = ({
   style,
   scrollable = false,
   scrollProps,
-  padding = SPACING.lg,
 }) => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: COLORS.background,
-    },
-    content: {
-      padding,
-    },
-    scrollContent: {
-      flexGrow: 1,
-    },
-  });
-
   if (scrollable) {
     return (
       <SafeAreaView style={[styles.container, style]}>
@@ -45,7 +30,7 @@ const SafeAreaContainer: React.FC<SafeAreaContainerProps> = ({
           showsVerticalScrollIndicator={false}
           {...scrollProps}
         >
-          <View style={styles.content}>{children}</View>
+          {children}
         </ScrollView>
       </SafeAreaView>
     );
@@ -53,9 +38,19 @@ const SafeAreaContainer: React.FC<SafeAreaContainerProps> = ({
 
   return (
     <SafeAreaView style={[styles.container, style]}>
-      <View style={styles.content}>{children}</View>
+      {children}
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+});
 
 export default SafeAreaContainer;

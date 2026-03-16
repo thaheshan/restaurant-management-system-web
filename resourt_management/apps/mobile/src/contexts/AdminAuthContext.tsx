@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { AdminUser } from '@types/index';
+import { AdminUser } from '@/types';
 
 interface AdminAuthContextType {
   admin: AdminUser | null;

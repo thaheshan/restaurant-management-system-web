@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CartItem } from '@types/index';
+import { CartItem } from '@/types';
 
 const TAX_RATE = 0.1; // 10% tax
 

@@ -6,15 +6,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCustomerAuth } from '@contexts/CustomerAuthContext';
-import { SafeAreaContainer } from '@components/layout/SafeAreaContainer';
-import { TextField } from '@components/ui/TextField';
-import { Button } from '@components/ui/Button';
-import { colors } from '@constants/colors';
-import { spacing } from '@constants/spacing';
+import SafeAreaContainer from '@components/layout/SafeAreaContainer';
+import TextField from '@components/ui/TextField';
+import Button from '@components/ui/Button';
+import { COLORS } from '@constants/colors';
+import { SPACING } from '@constants/spacing';
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -63,17 +63,17 @@ export default function SignupScreen() {
           {/* Header with Logo */}
           <View
             style={{
-              backgroundColor: colors.primary,
-              paddingVertical: spacing.xl,
-              paddingHorizontal: spacing.md,
-              marginBottom: spacing.xl,
+              backgroundColor: COLORS.primary,
+              paddingVertical: SPACING.xl,
+              paddingHorizontal: SPACING.md,
+              marginBottom: SPACING.xl,
             }}
           >
             <Text
               style={{
                 fontSize: 32,
                 fontWeight: '700',
-                color: colors.white,
+                color: COLORS.white,
                 textAlign: 'center',
               }}
             >
@@ -82,13 +82,13 @@ export default function SignupScreen() {
           </View>
 
           {/* Welcome Section */}
-          <View style={{ paddingHorizontal: spacing.lg, marginBottom: spacing.lg }}>
+          <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
             <Text
               style={{
                 fontSize: 24,
                 fontWeight: '700',
-                color: colors.textPrimary,
-                marginBottom: spacing.sm,
+                color: COLORS.text.primary,
+                marginBottom: SPACING.sm,
               }}
             >
               Create Account
@@ -96,7 +96,7 @@ export default function SignupScreen() {
             <Text
               style={{
                 fontSize: 14,
-                color: colors.textSecondary,
+                color: COLORS.text.secondary,
                 lineHeight: 20,
               }}
             >
@@ -105,15 +105,15 @@ export default function SignupScreen() {
           </View>
 
           {/* Form Section */}
-          <View style={{ paddingHorizontal: spacing.lg, marginBottom: spacing.lg }}>
+          <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
             {/* Name Field */}
-            <View style={{ marginBottom: spacing.md }}>
+            <View style={{ marginBottom: SPACING.md }}>
               <Text
                 style={{
                   fontSize: 14,
                   fontWeight: '600',
-                  color: colors.textPrimary,
-                  marginBottom: spacing.sm,
+                  color: COLORS.text.primary,
+                  marginBottom: SPACING.sm,
                 }}
               >
                 Full Name
@@ -127,13 +127,13 @@ export default function SignupScreen() {
             </View>
 
             {/* Phone Field */}
-            <View style={{ marginBottom: spacing.md }}>
+            <View style={{ marginBottom: SPACING.md }}>
               <Text
                 style={{
                   fontSize: 14,
                   fontWeight: '600',
-                  color: colors.textPrimary,
-                  marginBottom: spacing.sm,
+                  color: COLORS.text.primary,
+                  marginBottom: SPACING.sm,
                 }}
               >
                 Phone Number
@@ -148,8 +148,8 @@ export default function SignupScreen() {
               <Text
                 style={{
                   fontSize: 12,
-                  color: colors.textTertiary,
-                  marginTop: spacing.xs,
+                  color: COLORS.text.tertiary,
+                  marginTop: SPACING.xs,
                 }}
               >
                 This will be used to identify your orders
@@ -157,13 +157,13 @@ export default function SignupScreen() {
             </View>
 
             {/* Email Field */}
-            <View style={{ marginBottom: spacing.lg }}>
+            <View style={{ marginBottom: SPACING.lg }}>
               <Text
                 style={{
                   fontSize: 14,
                   fontWeight: '600',
-                  color: colors.textPrimary,
-                  marginBottom: spacing.sm,
+                  color: COLORS.text.primary,
+                  marginBottom: SPACING.sm,
                 }}
               >
                 Email (Optional)
@@ -179,19 +179,13 @@ export default function SignupScreen() {
           </View>
 
           {/* Signup Button */}
-          <View style={{ paddingHorizontal: spacing.lg, marginBottom: spacing.lg }}>
+          <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
             <Button
               title={loading ? 'Creating Account...' : 'Sign Up'}
               onPress={handleSignup}
               disabled={loading}
-              style={{
-                opacity: loading ? 0.6 : 1,
-              }}
-            >
-              {loading && (
-                <ActivityIndicator color={colors.white} style={{ marginRight: spacing.sm }} />
-              )}
-            </Button>
+              style={{ opacity: loading ? 0.6 : 1 }}
+            />
           </View>
 
           {/* Login Link */}
@@ -200,20 +194,17 @@ export default function SignupScreen() {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              gap: spacing.xs,
+              gap: SPACING.xs,
             }}
           >
-            <Text style={{ fontSize: 14, color: colors.textSecondary }}>
+            <Text style={{ fontSize: 14, color: COLORS.text.secondary }}>
               Already have an account?
             </Text>
-            <Button
-              title="Login"
-              onPress={navigateToLogin}
-              variant="text"
-              style={{
-                paddingHorizontal: 0,
-              }}
-            />
+            <TouchableOpacity onPress={navigateToLogin}>
+              <Text style={{ fontSize: 14, color: COLORS.primary, fontWeight: '600' }}>
+                Login
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

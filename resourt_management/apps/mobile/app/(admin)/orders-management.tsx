@@ -11,8 +11,9 @@ import Header from '@components/layout/Header';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Card from '@components/ui/Card';
 import { useOrder } from '@contexts/OrderContext';
-import { OrderStatus } from '@types/index';
-import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import type { OrderStatus } from '@/types';
+import { COLORS } from '@constants/colors';
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 export default function OrdersManagementScreen() {
   const router = useRouter();

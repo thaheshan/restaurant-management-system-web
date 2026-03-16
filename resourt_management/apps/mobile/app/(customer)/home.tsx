@@ -5,16 +5,15 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  ImageBackground,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useCustomerAuth } from '@contexts/CustomerAuthContext';
-import { SafeAreaContainer } from '@components/layout/SafeAreaContainer';
-import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
-import { colors } from '@constants/colors';
-import { spacing } from '@constants/spacing';
+import SafeAreaContainer from '@components/layout/SafeAreaContainer';
+import Button from '@components/ui/Button';
+import Card from '@components/ui/Card';
+import { COLORS } from '@constants/colors';
+import { SPACING } from '@constants/spacing';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -28,9 +27,7 @@ export default function HomeScreen() {
     try {
       const scannedData = result.data;
 
-      // Parse QR code data format: dinesmart://restaurant/{restaurantId}/table/{tableId}
-      // Fallback format: dinesmart://table/{tableId}
-      let restaurantId = 'rest-1'; // default
+      let restaurantId = 'rest-1';
       let tableId = '';
 
       const fullRegex = /dinesmart:\/\/restaurant\/([^/]+)\/table\/([^/]+)/;
@@ -49,13 +46,9 @@ export default function HomeScreen() {
 
       if (tableId) {
         setIsScannerOpen(false);
-        // Navigate to menu categories with restaurant and table params
         router.push({
           pathname: '/(customer)/menu-categories',
-          params: {
-            restaurantId,
-            tableId,
-          },
+          params: { restaurantId, tableId },
         });
       } else {
         Alert.alert('Invalid QR Code', 'Please scan a valid DineSmart QR code');
@@ -94,12 +87,10 @@ export default function HomeScreen() {
 
   if (isScannerOpen && permission?.granted) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={{ flex: 1, backgroundColor: COLORS.background }}>
         <CameraView
           onBarcodeScanned={isScanning ? undefined : handleBarCodeScanned}
-          barcodeScannerSettings={{
-            barcodeTypes: ['qr'],
-          }}
+          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
           style={{ flex: 1 }}
         />
 
@@ -116,25 +107,22 @@ export default function HomeScreen() {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
           }}
         >
-          {/* Scanner Frame */}
           <View
             style={{
               width: 250,
               height: 250,
               borderWidth: 3,
-              borderColor: colors.primary,
+              borderColor: COLORS.primary,
               borderRadius: 12,
             }}
           />
-
-          {/* Instructions */}
           <Text
             style={{
-              marginTop: spacing.lg,
+              marginTop: SPACING.lg,
               fontSize: 14,
-              color: colors.white,
+              color: COLORS.white,
               textAlign: 'center',
-              paddingHorizontal: spacing.lg,
+              paddingHorizontal: SPACING.lg,
             }}
           >
             Position the QR code within the frame to scan
@@ -145,9 +133,9 @@ export default function HomeScreen() {
         <View
           style={{
             position: 'absolute',
-            bottom: spacing.lg,
-            left: spacing.lg,
-            right: spacing.lg,
+            bottom: SPACING.lg,
+            left: SPACING.lg,
+            right: SPACING.lg,
           }}
         >
           <Button
@@ -170,14 +158,8 @@ export default function HomeScreen() {
               backgroundColor: 'rgba(0, 0, 0, 0.7)',
             }}
           >
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text
-              style={{
-                marginTop: spacing.md,
-                fontSize: 14,
-                color: colors.white,
-              }}
-            >
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Text style={{ marginTop: SPACING.md, fontSize: 14, color: COLORS.white }}>
               Processing QR Code...
             </Text>
           </View>
@@ -192,10 +174,10 @@ export default function HomeScreen() {
         {/* Header */}
         <View
           style={{
-            backgroundColor: colors.primary,
-            paddingVertical: spacing.lg,
-            paddingHorizontal: spacing.md,
-            marginBottom: spacing.lg,
+            backgroundColor: COLORS.primary,
+            paddingVertical: SPACING.lg,
+            paddingHorizontal: SPACING.md,
+            marginBottom: SPACING.lg,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -206,13 +188,13 @@ export default function HomeScreen() {
               style={{
                 fontSize: 24,
                 fontWeight: '700',
-                color: colors.white,
-                marginBottom: spacing.xs,
+                color: COLORS.white,
+                marginBottom: SPACING.xs,
               }}
             >
               DineSmart
             </Text>
-            <Text style={{ fontSize: 12, color: colors.lightBackground }}>
+            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)' }}>
               Welcome, {user?.name}
             </Text>
           </View>
@@ -220,50 +202,41 @@ export default function HomeScreen() {
             title="Logout"
             onPress={handleLogout}
             variant="secondary"
-            style={{
-              paddingHorizontal: spacing.md,
-              paddingVertical: spacing.sm,
-            }}
+            style={{ paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm }}
           />
         </View>
 
         {/* Welcome Card */}
-        <Card style={{ marginHorizontal: spacing.md, marginBottom: spacing.lg }}>
+        <Card style={{ marginHorizontal: SPACING.md, marginBottom: SPACING.lg }}>
           <View>
             <Text
               style={{
                 fontSize: 18,
                 fontWeight: '700',
-                color: colors.textPrimary,
-                marginBottom: spacing.sm,
+                color: COLORS.text.primary,
+                marginBottom: SPACING.sm,
               }}
             >
               Welcome Back!
             </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: colors.textSecondary,
-                lineHeight: 20,
-              }}
-            >
+            <Text style={{ fontSize: 14, color: COLORS.text.secondary, lineHeight: 20 }}>
               Scan a table's QR code to view the menu and place an order
             </Text>
           </View>
         </Card>
 
         {/* QR Scanner Section */}
-        <View style={{ paddingHorizontal: spacing.md, marginBottom: spacing.lg }}>
+        <View style={{ paddingHorizontal: SPACING.md, marginBottom: SPACING.lg }}>
           <View
             style={{
-              backgroundColor: colors.lightBackground,
+              backgroundColor: COLORS.surface,
               borderRadius: 12,
-              padding: spacing.lg,
+              padding: SPACING.lg,
               borderWidth: 2,
-              borderColor: colors.primary,
+              borderColor: COLORS.primary,
               borderStyle: 'dashed',
               alignItems: 'center',
-              marginBottom: spacing.lg,
+              marginBottom: SPACING.lg,
             }}
           >
             <View
@@ -271,10 +244,10 @@ export default function HomeScreen() {
                 width: 80,
                 height: 80,
                 borderRadius: 40,
-                backgroundColor: colors.primary,
+                backgroundColor: COLORS.primary,
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginBottom: spacing.md,
+                marginBottom: SPACING.md,
               }}
             >
               <Text style={{ fontSize: 40 }}>📱</Text>
@@ -284,8 +257,8 @@ export default function HomeScreen() {
               style={{
                 fontSize: 16,
                 fontWeight: '700',
-                color: colors.textPrimary,
-                marginBottom: spacing.sm,
+                color: COLORS.text.primary,
+                marginBottom: SPACING.sm,
                 textAlign: 'center',
               }}
             >
@@ -295,9 +268,9 @@ export default function HomeScreen() {
             <Text
               style={{
                 fontSize: 13,
-                color: colors.textSecondary,
+                color: COLORS.text.secondary,
                 textAlign: 'center',
-                marginBottom: spacing.lg,
+                marginBottom: SPACING.lg,
                 lineHeight: 18,
               }}
             >
@@ -313,9 +286,7 @@ export default function HomeScreen() {
                     : 'Open Settings'
               }
               onPress={
-                permission?.granted
-                  ? () => setIsScannerOpen(true)
-                  : handleRequestPermission
+                permission?.granted ? () => setIsScannerOpen(true) : handleRequestPermission
               }
               style={{ width: '100%' }}
             />
@@ -323,70 +294,50 @@ export default function HomeScreen() {
         </View>
 
         {/* Demo Info */}
-        <Card style={{ marginHorizontal: spacing.md, marginBottom: spacing.lg }}>
+        <Card style={{ marginHorizontal: SPACING.md, marginBottom: SPACING.lg }}>
           <View>
             <Text
               style={{
                 fontSize: 14,
                 fontWeight: '600',
-                color: colors.primary,
-                marginBottom: spacing.sm,
+                color: COLORS.primary,
+                marginBottom: SPACING.sm,
               }}
             >
               Demo QR Code Formats:
             </Text>
-            <Text
-              style={{
-                fontSize: 11,
-                color: colors.textSecondary,
-                fontFamily: 'monospace',
-                marginBottom: spacing.xs,
-                paddingVertical: spacing.xs,
-                paddingHorizontal: spacing.sm,
-                backgroundColor: colors.lightBackground,
-                borderRadius: 4,
-              }}
-            >
-              dinesmart://restaurant/rest-1/table/101
-            </Text>
-            <Text
-              style={{
-                fontSize: 11,
-                color: colors.textSecondary,
-                fontFamily: 'monospace',
-                marginBottom: spacing.xs,
-                paddingVertical: spacing.xs,
-                paddingHorizontal: spacing.sm,
-                backgroundColor: colors.lightBackground,
-                borderRadius: 4,
-              }}
-            >
-              dinesmart://restaurant/rest-2/table/205
-            </Text>
-            <Text
-              style={{
-                fontSize: 11,
-                color: colors.textSecondary,
-                fontFamily: 'monospace',
-                paddingVertical: spacing.xs,
-                paddingHorizontal: spacing.sm,
-                backgroundColor: colors.lightBackground,
-                borderRadius: 4,
-              }}
-            >
-              dinesmart://table/301
-            </Text>
+            {[
+              'dinesmart://restaurant/rest-1/table/101',
+              'dinesmart://restaurant/rest-2/table/205',
+              'dinesmart://table/301',
+            ].map((code, idx) => (
+              <Text
+                key={idx}
+                style={{
+                  fontSize: 11,
+                  color: COLORS.text.secondary,
+                  fontFamily: 'monospace',
+                  marginBottom: SPACING.xs,
+                  paddingVertical: SPACING.xs,
+                  paddingHorizontal: SPACING.sm,
+                  backgroundColor: COLORS.surface,
+                  borderRadius: 4,
+                }}
+              >
+                {code}
+              </Text>
+            ))}
           </View>
         </Card>
 
         {/* Features Section */}
-        <View style={{ paddingHorizontal: spacing.md, marginBottom: spacing.xl }}>
+        <View style={{ paddingHorizontal: SPACING.md, marginBottom: SPACING.xl }}>
           <Text
             style={{
               fontSize: 16,
               fontWeight: '700',
-              color: colors.textPrimary,
-              marginBottom: spacing.md,
+              color: COLORS.text.primary,
+              marginBottom: SPACING.md,
             }}
           >
             What You Can Do
@@ -402,7 +353,7 @@ export default function HomeScreen() {
               key={index}
               style={{
                 flexDirection: 'row',
-                marginBottom: spacing.md,
+                marginBottom: SPACING.md,
                 alignItems: 'flex-start',
               }}
             >
@@ -411,10 +362,10 @@ export default function HomeScreen() {
                   width: 32,
                   height: 32,
                   borderRadius: 16,
-                  backgroundColor: colors.primary,
+                  backgroundColor: COLORS.primary,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  marginRight: spacing.md,
+                  marginRight: SPACING.md,
                 }}
               >
                 <Text style={{ fontSize: 16 }}>
@@ -426,13 +377,13 @@ export default function HomeScreen() {
                   style={{
                     fontSize: 14,
                     fontWeight: '600',
-                    color: colors.textPrimary,
-                    marginBottom: spacing.xs,
+                    color: COLORS.text.primary,
+                    marginBottom: SPACING.xs,
                   }}
                 >
                   {feature.title}
                 </Text>
-                <Text style={{ fontSize: 12, color: colors.textSecondary }}>
+                <Text style={{ fontSize: 12, color: COLORS.text.secondary }}>
                   {feature.desc}
                 </Text>
               </View>
