@@ -1,0 +1,133 @@
+.inventory {
+  &__add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: #2d5a3d;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #3a7a52;
+    }
+  }
+
+  /* ── Summary Cards ── */
+  &__summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  &__card {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px 16px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  &__card-icon {
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+  }
+
+  &__card-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__card-label {
+    font-size: 0.7rem;
+    color: #888;
+    white-space: nowrap;
+  }
+
+  &__card-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  /* ── Table ── */
+  &__table-wrapper {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 13px 18px;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: #fafafa;
+      color: #888;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f2f2f2;
+      transition: background 0.15s ease;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: #fafbfc;
+      }
+    }
+  }
+
+  &__cell-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  &__ingredient-icon {
+    font-size: 1.1rem;
+  }
+
+  &__cell-category {
+    color: #888;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  &__status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}

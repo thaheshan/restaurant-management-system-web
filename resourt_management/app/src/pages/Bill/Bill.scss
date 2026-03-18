@@ -1,0 +1,136 @@
+.bill-page {
+  min-height: 100vh;
+  background: #f0f0f0;
+
+  &__content {
+    max-width: 550px;
+    margin: 0 auto;
+    padding: 40px 24px 48px;
+  }
+
+  &__card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px 24px 32px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+  }
+
+  &__items {
+    margin-bottom: 20px;
+  }
+
+  &__divider {
+    height: 1px;
+    background: #e8e8e8;
+    margin: 16px 0;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    &--total {
+      margin-top: 4px;
+      margin-bottom: 24px;
+    }
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    color: #777;
+
+    &--total {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+  }
+
+  &__value {
+    font-size: 0.85rem;
+    color: #777;
+
+    &--total {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+  }
+
+  &__proceed-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 28px;
+    background: #2d5a3d;
+    color: #ffffff;
+    border: none;
+    border-radius: 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(45, 90, 61, 0.25);
+    text-align: center;
+
+    &:hover {
+      background: #3a7a52;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(45, 90, 61, 0.35);
+    }
+  }
+}
+
+.bill-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  &__image-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 2px 0;
+  }
+
+  &__desc {
+    font-size: 0.75rem;
+    color: #999;
+    margin: 0 0 4px 0;
+    line-height: 1.4;
+  }
+
+  &__price {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2d5a3d;
+    margin: 0;
+  }
+}
