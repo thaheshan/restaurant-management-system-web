@@ -1,0 +1,184 @@
+.payment-page {
+  min-height: 100vh;
+  background: #f0f0f0;
+
+  &__content {
+    max-width: 550px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+
+  &__total-section {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  &__total-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+
+  &__total-amount {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d5a3d;
+  }
+
+  &__card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 20px 28px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 28px;
+  }
+
+  &__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 4px 0;
+  }
+
+  &__subtitle {
+    font-size: 0.78rem;
+    color: #999;
+    margin: 0 0 20px 0;
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  &__promo {
+    margin-top: 4px;
+  }
+
+  &__promo-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: #1a1a1a;
+    background: #fafafa;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &::placeholder {
+      color: #bbb;
+    }
+
+    &:focus {
+      border-color: #2d5a3d;
+    }
+  }
+
+  &__confirm-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 28px;
+    background: #2d5a3d;
+    color: #ffffff;
+    border: none;
+    border-radius: 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(45, 90, 61, 0.25);
+    text-align: center;
+
+    &:hover {
+      background: #3a7a52;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(45, 90, 61, 0.35);
+    }
+  }
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #fafafa;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+
+  &:hover {
+    border-color: #c0c0c0;
+  }
+
+  &--active {
+    border-color: #2d5a3d;
+    background: #f0f7f2;
+
+    .payment-option__icon {
+      color: #2d5a3d;
+    }
+  }
+
+  &__icon {
+    font-size: 1.2rem;
+    color: #777;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  &__desc {
+    font-size: 0.72rem;
+    color: #999;
+    margin-top: 1px;
+  }
+
+  &__radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.2s ease;
+
+    &--checked {
+      border-color: #2d5a3d;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #2d5a3d;
+      }
+    }
+  }
+}
