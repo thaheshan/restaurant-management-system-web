@@ -1,121 +1,200 @@
-import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
-import { FaCheckCircle, FaShieldAlt } from 'react-icons/fa';
+import React, { useState } from 'react';
 import './HygieneDashboard.scss';
 
-interface SanitizationEntry {
-  id: string;
-  task: string;
-  assigned: string;
+interface SanitizationLog {
+  id: number;
+  type: string;
+  employee: string;
   date: string;
   time: string;
-  status: 'Completed' | 'Pending' | 'In Progress';
+  status: 'done' | 'pending';
 }
 
-const sanitizationLog: SanitizationEntry[] = [
+interface Certification {
+  name: string;
+  code: string;
+  level: string;
+  issueDate: string;
+  expiryDate: string;
+  daysLeft: number;
+}
+
+const certifications: Certification[] = [
   {
-    id: '1',
-    task: 'Surface Prep',
-    assigned: 'Sunil',
-    date: 'Jun 25, 2025',
-    time: '11:50 PM',
-    status: 'Completed',
-  },
-  {
-    id: '2',
-    task: 'Deep Clean',
-    assigned: 'Pradeep',
-    date: 'Jun 25, 2025',
-    time: '12:00 PM',
-    status: 'Completed',
-  },
-  {
-    id: '3',
-    task: 'Toilet Clean',
-    assigned: 'Ajith',
-    date: 'Jun 25, 2025',
-    time: '12:00 PM',
-    status: 'Completed',
+    name: 'SL Certification',
+    code: 'FSSAI Level 4',
+    level: 'Standard License Level 4',
+    issueDate: 'Jan 12, 2025',
+    expiryDate: 'Jan 12, 2026',
+    daysLeft: 290,
   },
 ];
 
-const statusColor: Record<string, string> = {
-  Completed: '#2d5a3d',
-  Pending: '#e67e22',
-  'In Progress': '#3498db',
+const sanitizationLogs: SanitizationLog[] = [
+  { id: 1, type: 'Surface Prep',  employee: 'Sunil',   date: 'Jun 20, 2030', time: '11:30 PM', status: 'done' },
+  { id: 2, type: 'Deep Clean',    employee: 'Pradeep', date: 'Jun 20, 2030', time: '12:00 PM', status: 'done' },
+  { id: 3, type: 'Tanks Clean',   employee: 'Sunil',   date: 'Jun 20, 2030', time: '12:00 PM', status: 'done' },
+  { id: 4, type: 'Equipment Wipe',employee: 'Maya',    date: 'Jun 20, 2030', time: '01:00 PM', status: 'pending' },
+];
+
+const sanitizationIcons: Record<string, string> = {
+  'Surface Prep': '🧽',
+  'Deep Clean': '🧹',
+  'Tanks Clean': '🪣',
+  'Equipment Wipe': '🧴',
 };
 
 const HygieneDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'certifications' | 'logs' | 'schedule'>('certifications');
+
+  const complianceScore = 94;
+
   return (
-    <DashboardLayout title="Hygiene & Compliance Dashboard">
-      <div className="hygiene">
-        {/* Certification Card */}
-        <section className="hygiene__cert-section">
-          <h3 className="hygiene__section-title">Food Safety Certifications</h3>
+    <div className="hygiene">
+      {/* Header */}
+      <div className="hygiene__header">
+        <div>
+          <h1 className="hygiene__title">Hygiene & Compliance</h1>
+          <p className="hygiene__subtitle">Monitor food safety standards and sanitization records</p>
+        </div>
+        <button className="btn-add-cert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Log Sanitization
+        </button>
+      </div>
 
-          <div className="hygiene__cert-card">
-            <div className="hygiene__cert-header">
-              <div className="hygiene__cert-info">
-                <h4 className="hygiene__cert-name">SL Certification</h4>
-                <span className="hygiene__cert-status">
-                  <FaCheckCircle /> Standard / Level 4
-                </span>
-              </div>
-              <div className="hygiene__cert-badge">
-                <FaShieldAlt />
-              </div>
-            </div>
-
-            <div className="hygiene__cert-dates">
-              <div className="hygiene__cert-date-item">
-                <span className="hygiene__cert-date-label">Issued Date</span>
-                <span className="hygiene__cert-date-value">Jan 12, 2025</span>
-              </div>
-              <div className="hygiene__cert-date-item">
-                <span className="hygiene__cert-date-label">Expiry Date</span>
-                <span className="hygiene__cert-date-value">Jan 12, 2026</span>
-              </div>
-            </div>
+      {/* Score Banner */}
+      <div className="compliance-banner">
+        <div className="compliance-banner__score">
+          <div className="score-ring">
+            <svg viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="6"/>
+              <circle
+                cx="40" cy="40" r="34"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="6"
+                strokeDasharray={`${2 * Math.PI * 34 * complianceScore / 100} ${2 * Math.PI * 34}`}
+                strokeLinecap="round"
+                transform="rotate(-90 40 40)"
+              />
+            </svg>
+            <span className="score-value">{complianceScore}%</span>
           </div>
-        </section>
+          <div className="compliance-banner__info">
+            <h3>Compliance Score</h3>
+            <p>Excellent — All major checks passed</p>
+          </div>
+        </div>
+        <div className="compliance-banner__stats">
+          <div className="cs-stat">
+            <span className="cs-stat__num">12</span>
+            <span className="cs-stat__label">Checks This Week</span>
+          </div>
+          <div className="cs-stat">
+            <span className="cs-stat__num">2</span>
+            <span className="cs-stat__label">Pending Tasks</span>
+          </div>
+          <div className="cs-stat">
+            <span className="cs-stat__num">1</span>
+            <span className="cs-stat__label">Active Certifications</span>
+          </div>
+        </div>
+      </div>
 
-        {/* Sanitization Log */}
-        <section className="hygiene__log-section">
-          <h3 className="hygiene__section-title">Recent Sanitization Log</h3>
+      {/* Tabs */}
+      <div className="hygiene__tabs">
+        {(['certifications', 'logs', 'schedule'] as const).map(tab => (
+          <button
+            key={tab}
+            className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab === 'certifications' ? '🏅 Certifications' : tab === 'logs' ? '📋 Sanitization Logs' : '📅 Schedule'}
+          </button>
+        ))}
+      </div>
 
-          <div className="hygiene__log-table-wrapper">
-            <table className="hygiene__log-table">
+      {/* Tab Content */}
+      {activeTab === 'certifications' && (
+        <div className="hygiene__section">
+          <h2 className="section-title">Food Safety Certifications</h2>
+          <div className="cert-grid">
+            {certifications.map((cert, i) => (
+              <div key={i} className="cert-card">
+                <div className="cert-card__top">
+                  <div className="cert-card__badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="8" r="6"/>
+                      <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+                    </svg>
+                  </div>
+                  <div className="cert-card__info">
+                    <h3>{cert.name}</h3>
+                    <p className="cert-code">{cert.code}</p>
+                    <p className="cert-level">{cert.level}</p>
+                  </div>
+                  <div className="cert-card__logo">
+                    <div className="cert-logo-box">SL</div>
+                  </div>
+                </div>
+                <div className="cert-card__dates">
+                  <div className="cert-date">
+                    <span className="cert-date__label">Issue Date</span>
+                    <span className="cert-date__value">{cert.issueDate}</span>
+                  </div>
+                  <div className="cert-date">
+                    <span className="cert-date__label">Expiry Date</span>
+                    <span className="cert-date__value expiry">{cert.expiryDate}</span>
+                  </div>
+                </div>
+                <div className="cert-card__progress">
+                  <div className="cert-progress-label">
+                    <span>Validity</span>
+                    <span className="days-left">{cert.daysLeft} days left</span>
+                  </div>
+                  <div className="cert-progress-bar">
+                    <div className="cert-progress-fill" style={{ width: `${(cert.daysLeft / 365) * 100}%` }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'logs' && (
+        <div className="hygiene__section">
+          <h2 className="section-title">Recent Sanitization Log</h2>
+          <div className="log-table-card">
+            <table className="log-table">
               <thead>
                 <tr>
-                  <th></th>
-                  <th>Task</th>
-                  <th>Assigned</th>
+                  <th>Session Type</th>
+                  <th>Employee</th>
                   <th>Date</th>
                   <th>Time</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {sanitizationLog.map((entry) => (
-                  <tr key={entry.id}>
+                {sanitizationLogs.map(log => (
+                  <tr key={log.id}>
                     <td>
-                      <FaCheckCircle
-                        className="hygiene__log-check"
-                        style={{ color: statusColor[entry.status] }}
-                      />
+                      <div className="log-type">
+                        <span className="log-icon">{sanitizationIcons[log.type] || '🧼'}</span>
+                        {log.type}
+                      </div>
                     </td>
-                    <td className="hygiene__log-task">{entry.task}</td>
-                    <td>{entry.assigned}</td>
-                    <td>{entry.date}</td>
-                    <td>{entry.time}</td>
+                    <td className="log-employee">{log.employee}</td>
+                    <td className="log-date">{log.date}</td>
+                    <td className="log-time">{log.time}</td>
                     <td>
-                      <span
-                        className="hygiene__log-status"
-                        style={{
-                          color: statusColor[entry.status],
-                          background: `${statusColor[entry.status]}14`,
-                        }}
-                      >
-                        {entry.status}
+                      <span className={`log-status log-status--${log.status}`}>
+                        {log.status === 'done' ? '✓ Done' : '○ Pending'}
                       </span>
                     </td>
                   </tr>
@@ -123,9 +202,19 @@ const HygieneDashboard: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </section>
-      </div>
-    </DashboardLayout>
+        </div>
+      )}
+
+      {activeTab === 'schedule' && (
+        <div className="hygiene__section">
+          <div className="schedule-empty">
+            <span>📅</span>
+            <h3>Schedule Coming Soon</h3>
+            <p>Set up recurring sanitization schedules for your kitchen team.</p>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

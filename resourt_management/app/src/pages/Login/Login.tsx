@@ -1,67 +1,100 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import './Login.scss';
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/menu');
+    setLoading(true);
+    setTimeout(() => setLoading(false), 2000);
   };
 
   return (
-    <div className="login-page">
-      <div className="login-page__image-panel">
-        <img
-          src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=1200&fit=crop"
-          alt="Delicious food spread"
-          className="login-page__hero-image"
-        />
-        <div className="login-page__image-overlay" />
+    <div className="login-root">
+      <div className="login-left">
+        <div className="login-left__overlay" />
+        <div className="login-left__brand">
+          <span className="brand-icon">🍽</span>
+          <span className="brand-name">DineSmart</span>
+        </div>
+        <div className="login-left__tagline">
+          <h2>Smart Kitchen.<br />Zero Waste.<br />Full Compliance.</h2>
+          <p>Your all-in-one restaurant management platform.</p>
+        </div>
       </div>
 
-      <div className="login-page__form-panel">
-        <form className="login-form" onSubmit={handleSubmit}>
-          <h1 className="login-form__title">Welcome !</h1>
-          <p className="login-form__subtitle">
-            Enter your Credentials to access your account
+      <div className="login-right">
+        <div className="login-card">
+          <div className="login-card__header">
+            <div className="login-card__logo">
+              <span>DS</span>
+            </div>
+            <h1>Welcome Back!</h1>
+            <p>Enter your credentials to access your account</p>
+          </div>
+
+          <form className="login-form" onSubmit={handleLogin}>
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <div className="input-wrapper">
+                <svg className="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="name@restaurant.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">
+                Password
+                <a href="#" className="forgot-link">Forgot password?</a>
+              </label>
+              <div className="input-wrapper">
+                <svg className="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" className={`btn-login ${loading ? 'loading' : ''}`} disabled={loading}>
+              {loading ? (
+                <span className="spinner" />
+              ) : (
+                <>
+                  <span>Log In</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="login-footer">
+            Don't have an account? <a href="#">Contact your admin</a>
           </p>
-
-          <div className="login-form__field">
-            <label htmlFor="email" className="login-form__label">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              className="login-form__input"
-              placeholder="example@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="login-form__field">
-            <label htmlFor="password" className="login-form__label">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              className="login-form__input"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <button type="submit" className="login-form__button">
-            Login
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );
