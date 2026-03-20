@@ -1,20 +1,25 @@
 import api from './api';
 
 const inventoryService = {
-  getAll: async () => {
-    const response = await api.get('/inventory');
-    return response.data;
+  getAll: async (restaurantId: string) => {
+    const res = await api.get(`/inventory/restaurant/${restaurantId}`);
+    return res.data;
   },
   create: async (data: any) => {
-    const response = await api.post('/inventory', data);
-    return response.data;
+    const res = await api.post('/inventory/', data);
+    return res.data;
   },
-  update: async (id: number, data: any) => {
-    const response = await api.put(+""+/inventory/+""+""+`, data);
-    return response.data;
+  update: async (id: string, data: any) => {
+    const res = await api.put(`/inventory/${id}`, data);
+    return res.data;
   },
-  delete: async (id: number) => {
-    await api.delete(+""+/inventory/+""+""+`);
+  getExpiryAlerts: async (restaurantId: string) => {
+    const res = await api.get(`/inventory/restaurant/${restaurantId}/expiry-alerts`);
+    return res.data;
+  },
+  getStats: async (restaurantId: string) => {
+    const res = await api.get(`/inventory/restaurant/${restaurantId}/stats`);
+    return res.data;
   },
 };
 

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import expiryService from '@/app/src/services/expiryService';
 
 interface ExpiryItem {
-  id: number;
+  id: string;
   name: string;
   category: string;
   expiryDate: string;
@@ -10,40 +10,31 @@ interface ExpiryItem {
   severity: 'expired' | 'critical' | 'warning';
   quantity: string;
   supplier: string;
-  icon: string;
 }
 
 interface ExpiryState {
   items: ExpiryItem[];
   loading: boolean;
   error: string | null;
+  resolvedIds: string[];
 }
 
 const initialState: ExpiryState = {
   items: [],
   loading: false,
   error: null,
+  resolvedIds: [],
 };
 
 export const fetchExpiryAlerts = createAsyncThunk(
   'expiry/fetchAll',
-  async (_, { rejectWithValue }) => {
+  async (restaurantId: string, { rejectWithValue }) => {
     try {
-      return await expiryService.getAll();
+      return await expiryService.getAll(restaurantId);
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch expiry alerts');
-    }
-  }
-);
-
-export const resolveExpiryAlert = createAsyncThunk(
-  'expiry/resolve',
-  async (id: number, { rejectWithValue }) => {
-    try {
-      await expiryService.resolve(id);
-      return id;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to resolve alert');
+      return rejectWithValue(
+        err.response?.data?.message || 'Failed to fetch expiry alerts'
+      );
     }
   }
 );
@@ -51,7 +42,15 @@ export const resolveExpiryAlert = createAsyncThunk(
 const expirySlice = createSlice({
   name: 'expiry',
   initialState,
-  reducers: {},
+  reducers: {
+    resolveAlert(state, action) {
+      state.resolvedIds.push(action.payload);
+      state.items = state.items.filter((i) => i.id !== action.payload);
+    },
+    clearExpiryError(state) {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchExpiryAlerts.pending, (state) => {
@@ -60,16 +59,14 @@ const expirySlice = createSlice({
       })
       .addCase(fetchExpiryAlerts.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.items = action.payload.expiringItems || action.payload || [];
       })
       .addCase(fetchExpiryAlerts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      })
-      .addCase(resolveExpiryAlert.fulfilled, (state, action) => {
-        state.items = state.items.filter(i => i.id !== action.payload);
       });
   },
 });
 
+export const { resolveAlert, clearExpiryError } = expirySlice.actions;
 export default expirySlice.reducer;
