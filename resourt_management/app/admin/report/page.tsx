@@ -1,10 +1,10 @@
 import DashboardLayout from '@/components/DashboardLayout/MainDashboard';
-import Inventory from '../../src/pages/InventoryManagement/InventoryManagement';
+import Dashboard from '@/components/MainDashboard/Dashboard';
 
 export default function AdminDashboardPage() {
   return (
-    <DashboardLayout title="Inventory Management">
-      <Inventory />
+    <DashboardLayout title="Reports Management">
+      <Dashboard />
     </DashboardLayout>
   );
 }

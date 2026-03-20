@@ -1,0 +1,39 @@
+// ── Brand Colors ─────────────────────────────────────────
+$color-primary:       #1e6e4e;
+$color-primary-dark:  #144a34;
+$color-primary-light: #e8f5ee;
+$color-accent:        #27ae60;
+$color-danger:        #e74c3c;
+$color-warning:       #f39c12;
+$color-info:          #2980b9;
+$color-success:       #27ae60;
+
+// ── Neutrals ──────────────────────────────────────────────
+$color-bg:            #f4f6f8;
+$color-surface:       #ffffff;
+$color-border:        #e2e8f0;
+$color-text:          #1a202c;
+$color-text-muted:    #718096;
+$color-text-light:    #a0aec0;
+
+// ── Sidebar ───────────────────────────────────────────────
+$sidebar-width:       220px;
+$sidebar-bg:          #1a3a2a;
+$sidebar-text:        rgba(255,255,255,0.75);
+$sidebar-active-bg:   rgba(255,255,255,0.12);
+$sidebar-active-text: #ffffff;
+
+// ── Typography ────────────────────────────────────────────
+$font-display: 'Sora', 'Poppins', sans-serif;
+$font-body:    'DM Sans', 'Nunito', sans-serif;
+
+// ── Spacing / Shape ───────────────────────────────────────
+$radius-sm:  6px;
+$radius-md:  10px;
+$radius-lg:  16px;
+$radius-xl:  24px;
+
+// ── Shadows ───────────────────────────────────────────────
+$shadow-sm:  0 1px 4px rgba(0,0,0,0.06);
+$shadow-md:  0 4px 16px rgba(0,0,0,0.08);
+$shadow-lg:  0 8px 32px rgba(0,0,0,0.10);
