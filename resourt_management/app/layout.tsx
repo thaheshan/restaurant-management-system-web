@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import ReduxProvider from '@/app/src/store/ReduxProvider'
 import './globals.css'
 
 const geist = Geist({ subsets: ["latin"] });
@@ -29,9 +30,11 @@ export default function RootLayout({
     <html lang="en" style={{ margin: 0, padding: 0 }}>
       <body
         className={`${geist.className} ${geistMono.className} antialiased`}
-        style={{ margin: 0, padding: 0, overflowX: 'hidden' }}  // ← changed overflow to overflowX
+        style={{ margin: 0, padding: 0, overflowX: 'hidden' }}
       >
-        {children}
+        <ReduxProvider>
+          {children}
+        </ReduxProvider>
         <Analytics />
       </body>
     </html>
