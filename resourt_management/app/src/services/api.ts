@@ -1,19 +1,16 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+  headers: { 'Content-Type': 'application/json' },
 });
 
 api.interceptors.request.use((config) => {
   const session = localStorage.getItem('adminSession');
   if (session) {
-    const { token } = JSON.parse(session);
-    if (token) {
-      config.headers.Authorization = Bearer +token;
-    }
+    const parsed = JSON.parse(session);
+    const token = parsed.token;
+    if (token) config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

@@ -2,38 +2,30 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/app/src/store/hooks';
+import { loginUser, clearError } from '@/app/src/store/slices/authSlice';
 import './Login.scss';
 
 const Login = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector((state) => state.auth);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    dispatch(clearError());
 
-    setTimeout(() => {
-      if (email === 'admin@dinesmart.com' && password === 'admin123') {
-        localStorage.setItem(
-          'adminSession',
-          JSON.stringify({
-            id: 'admin-001',
-            email,
-            name: 'Chef Michael',
-            restaurantId: 'rest-001',
-          })
-        );
-        router.push('/admin/dashboard');
-      } else {
-        setError('Invalid email or password. Please try again.');
-        setLoading(false);
-      }
-    }, 500);
+    const result = await dispatch(loginUser({ email, password }));
+
+    if (loginUser.fulfilled.match(result)) {
+      const session = result.payload;
+      localStorage.setItem('adminSession', JSON.stringify(session));
+      router.push('/admin/dashboard');
+    }
   };
 
   return (
