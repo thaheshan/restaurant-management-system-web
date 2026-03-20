@@ -2,28 +2,24 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import DashboardLayout from '@/components/DashboardLayout/MainDashboard'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
-  const [authenticated, setAuthenticated] = useState(false)
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null)
 
   useEffect(() => {
-    setMounted(true)
     const session = localStorage.getItem('adminSession')
     if (!session) {
       router.push('/admin/login')
     } else {
-      setAuthenticated(true)
+      setTimeout(() => setAuthenticated(true), 0)
     }
   }, [router])
 
-  if (!mounted) return <>{children}</>
   if (pathname === '/admin/login') return <>{children}</>
+  if (authenticated === null) return null
   if (!authenticated) return null
 
-  // ✅ Just wrap children — no title here
-  return <DashboardLayout title="">{children}</DashboardLayout>
+  return <>{children}</>
 }

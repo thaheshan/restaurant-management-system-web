@@ -2,17 +2,25 @@
   display: flex;
   min-height: 100vh;
   background: #f4f5f7;
+  gap: 0;
+  margin: 0;
+  padding: 0;
 }
 
-/* ── Sidebar ── */
 .dashboard-sidebar {
   width: 230px;
-  background: #2A5D47;
+  min-height: 100vh;
+  background: #2d5a3d;
   color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex-shrink: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  margin: 0;
   padding: 0;
 
   &__top {
@@ -98,49 +106,57 @@
     font-size: 0.68rem;
     opacity: 0.6;
   }
-   &__logout {
+
+  &__logout {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 16px;
-    margin-top: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    gap: 8px;
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.82rem;
     cursor: pointer;
+    width: 100%;
     transition: all 0.2s ease;
 
+    svg { width: 16px; height: 16px; }
+
     &:hover {
-      background: rgba(255, 255, 255, 0.2);
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.1);
     }
   }
-  
 }
 
-/* ── Main content ── */
 .dashboard-main {
   flex: 1;
+  margin-left: 230px;
+  margin-top: 0;
+  padding-top: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  overflow-x: hidden;
+  height: 100vh;
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 18px 28px;
-    background: #ffffff;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin: 0;
+    flex-shrink: 0;
   }
 
   &__title {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: inherit;        // ← inherit so inline style takes effect
     margin: 0;
   }
 
@@ -154,5 +170,6 @@
     flex: 1;
     padding: 24px 28px 36px;
     overflow-y: auto;
+    height: calc(100vh - 62px);
   }
 }

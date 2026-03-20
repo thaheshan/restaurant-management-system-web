@@ -4,13 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
-  Image,
+ 
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Header from '@components/layout/Header';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
-import Card from '@components/ui/Card';
 import { useAdminAuth } from '@contexts/AdminAuthContext';
 import { CERTIFICATIONS, SANITIZATION_LOGS } from '@services/mockData';
 import { COLORS } from '@constants/colors';

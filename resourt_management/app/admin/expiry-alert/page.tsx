@@ -1,10 +1,10 @@
 import DashboardLayout from '@/components/DashboardLayout/MainDashboard';
-import Inventory from '../../src/pages/InventoryManagement/InventoryManagement';
+import ExpiryAlerts from '../../src/pages/ExpiryAlert/ExpiryAlert';
 
 export default function AdminDashboardPage() {
   return (
-    <DashboardLayout title="Inventory Management">
-      <Inventory />
+    <DashboardLayout title="Expiry Alerts">
+      <ExpiryAlerts />
     </DashboardLayout>
   );
 }

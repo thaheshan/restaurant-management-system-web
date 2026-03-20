@@ -1,0 +1,179 @@
+@use '../../../../styles/variable' as *;
+
+.sidebar {
+  width: $sidebar-width;
+  min-height: 100vh;
+  background: $sidebar-bg;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 100;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1.5rem 1.2rem 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    margin-bottom: 0.5rem;
+  }
+
+  &__brand-icon {
+    width: 36px;
+    height: 36px;
+    background: $color-primary;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-display;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #fff;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 8px rgba($color-primary, 0.4);
+    flex-shrink: 0;
+  }
+
+  &__brand-name {
+    font-family: $font-display;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.03em;
+    margin-left: .6rem;
+  }
+
+  &__nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  &__nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: $radius-md;
+    border: none;
+    background: transparent;
+    color: $sidebar-text;
+    font-family: $font-body;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    width: 100%;
+    text-align: left;
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      svg { width: 100%; height: 100%; }
+    }
+
+    .nav-label { flex: 1; }
+
+    .active-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: $color-accent;
+    }
+
+    &:hover {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+    }
+
+    &.active {
+      background: $sidebar-active-bg;
+      color: $sidebar-active-text;
+      font-weight: 600;
+    }
+  }
+
+  &__footer {
+    padding: 1rem 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+    min-width: 0;
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba($color-primary, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: $font-display;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+
+      .user-name {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .user-role {
+        font-size: 0.72rem;
+        color: $sidebar-text;
+      }
+    }
+  }
+
+  &__logout {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: $sidebar-text;
+    display: flex;
+    align-items: center;
+    padding: 0.4rem;
+    border-radius: 8px;
+    transition: color 0.18s, background 0.18s;
+    flex-shrink: 0;
+
+    svg { width: 16px; height: 16px; }
+
+    &:hover {
+      color: $color-danger;
+      background: rgba($color-danger, 0.12);
+    }
+  }
+}

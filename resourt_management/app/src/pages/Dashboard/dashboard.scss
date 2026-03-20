@@ -1,0 +1,244 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  &__section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+  }
+
+  /* Summary Cards */
+  &__summary {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  &__card {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px 16px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  &__card-icon {
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+  }
+
+  &__card-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__card-label {
+    font-size: 0.7rem;
+    color: #888;
+    white-space: nowrap;
+  }
+
+  &__card-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  /* Bottom Grid */
+  &__bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Activity */
+  &__activity {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  &__activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  &__activity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  &__activity-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__activity-action {
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  &__activity-time {
+    font-size: 0.72rem;
+    color: #999;
+  }
+
+  /* Snapshot Table */
+  &__snapshot {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  &__snapshot-table-wrapper {
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+  }
+
+  &__snapshot-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.83rem;
+    }
+
+    th {
+      background: #fafafa;
+      color: #888;
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f2f2f2;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: #fafbfc;
+      }
+    }
+  }
+
+  &__snapshot-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  &__snapshot-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.73rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Hygiene Card */
+  &__hygiene {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  &__hygiene-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  &__hygiene-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  &__hygiene-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 6px 0;
+  }
+
+  &__hygiene-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #2d5a3d;
+    font-weight: 500;
+  }
+
+  &__hygiene-badge {
+    width: 40px;
+    height: 40px;
+    background: #2d5a3d;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.1rem;
+  }
+
+  &__hygiene-dates {
+    display: flex;
+    gap: 32px;
+    padding-top: 14px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  &__hygiene-date-label {
+    display: block;
+    font-size: 0.7rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+  }
+
+  &__hygiene-date-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+}

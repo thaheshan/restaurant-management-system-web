@@ -1,5 +1,10 @@
-import Dashboard from '@/components/MainDashboard/Dashboard'
+import DashboardLayout from '@/components/DashboardLayout/MainDashboard';
+import Dashboard from '../../src/pages/Dashboard/dashboard';
 
 export default function AdminDashboardPage() {
-  return <Dashboard />
+  return (
+    <DashboardLayout title="Dashboard" >
+      <Dashboard />
+    </DashboardLayout>
+  );
 }
