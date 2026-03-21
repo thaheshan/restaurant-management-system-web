@@ -26,35 +26,51 @@ export default function HomeScreen() {
     setIsScanning(true);
     try {
       const scannedData = result.data;
+      console.log('Scanned QR data:', scannedData);
 
-      let restaurantId = 'rest-1';
-      let tableId = '';
+      let restaurantId = '';
+      let tableNumber = '';
 
-      const fullRegex = /dinesmart:\/\/restaurant\/([^/]+)\/table\/([^/]+)/;
-      const simpleRegex = /dinesmart:\/\/table\/(\d+)/;
+      // ── Try JSON format first (backend generates this) ──
+      try {
+        const parsed = JSON.parse(scannedData);
+        if (parsed.restaurantId) {
+          restaurantId = parsed.restaurantId;
+          tableNumber = String(parsed.tableNumber || '1');
+          console.log('Parsed JSON QR — restaurantId:', restaurantId, 'tableNumber:', tableNumber);
+        }
+      } catch {
+        // ── Fallback: try dinesmart:// URL format ──
+        const fullRegex = /dinesmart:\/\/restaurant\/([^/]+)\/table\/([^/]+)/;
+        const simpleRegex = /dinesmart:\/\/table\/(\d+)/;
 
-      let match = scannedData.match(fullRegex);
-      if (match) {
-        restaurantId = match[1];
-        tableId = match[2];
-      } else {
-        match = scannedData.match(simpleRegex);
+        let match = scannedData.match(fullRegex);
         if (match) {
-          tableId = match[1];
+          restaurantId = match[1];
+          tableNumber = match[2];
+          console.log('Parsed URL QR (full) — restaurantId:', restaurantId, 'tableNumber:', tableNumber);
+        } else {
+          match = scannedData.match(simpleRegex);
+          if (match) {
+            restaurantId = '35f2c4cc-3f75-4181-88e0-6733e4aba39e';
+            tableNumber = match[1];
+            console.log('Parsed URL QR (simple) — tableNumber:', tableNumber);
+          }
         }
       }
 
-      if (tableId) {
+      if (restaurantId && tableNumber) {
         setIsScannerOpen(false);
         router.push({
           pathname: '/(customer)/menu-categories',
-          params: { restaurantId, tableId },
+          params: { restaurantId, tableId: tableNumber },
         });
       } else {
         Alert.alert('Invalid QR Code', 'Please scan a valid DineSmart QR code');
         setIsScanning(false);
       }
     } catch (error) {
+      console.error('QR scan error:', error);
       Alert.alert('Error', 'Failed to process QR code');
       setIsScanning(false);
     }
@@ -140,7 +156,10 @@ export default function HomeScreen() {
         >
           <Button
             title="Close Scanner"
-            onPress={() => setIsScannerOpen(false)}
+            onPress={() => {
+              setIsScannerOpen(false);
+              setIsScanning(false);
+            }}
             variant="secondary"
           />
         </View>
@@ -220,7 +239,7 @@ export default function HomeScreen() {
               Welcome Back!
             </Text>
             <Text style={{ fontSize: 14, color: COLORS.text.secondary, lineHeight: 20 }}>
-              Scan a table's QR code to view the menu and place an order
+              Scan a table QR code to view the menu and place an order
             </Text>
           </View>
         </Card>
@@ -286,7 +305,9 @@ export default function HomeScreen() {
                     : 'Open Settings'
               }
               onPress={
-                permission?.granted ? () => setIsScannerOpen(true) : handleRequestPermission
+                permission?.granted
+                  ? () => setIsScannerOpen(true)
+                  : handleRequestPermission
               }
               style={{ width: '100%' }}
             />
@@ -304,11 +325,11 @@ export default function HomeScreen() {
                 marginBottom: SPACING.sm,
               }}
             >
-              Demo QR Code Formats:
+              Supported QR Code Formats:
             </Text>
             {[
+              '{"restaurantId":"...","tableNumber":1}',
               'dinesmart://restaurant/rest-1/table/101',
-              'dinesmart://restaurant/rest-2/table/205',
               'dinesmart://table/301',
             ].map((code, idx) => (
               <Text

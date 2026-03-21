@@ -1,0 +1,337 @@
+@use '../../../../styles/variable' as *;
+
+.qr-gen {
+  padding: 0;
+
+  // ── Header ─────────────────────────────────────────────
+  &__header {
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: $color-text;
+    margin: 0 0 4px;
+    font-family: $font-display;
+  }
+
+  &__subtitle {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+    margin: 0;
+  }
+
+  // ── Main Card ──────────────────────────────────────────
+  &__card {
+    background: #fff;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    padding: 28px;
+    box-shadow: $shadow-sm;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  // ── Form Row ───────────────────────────────────────────
+  &__form {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 180px;
+    max-width: 280px;
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: $color-text;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    input {
+      padding: 10px 14px;
+      border: 1.5px solid $color-border;
+      border-radius: $radius-md;
+      font-size: 0.92rem;
+      font-family: $font-body;
+      color: $color-text;
+      background: $color-bg;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+      box-sizing: border-box;
+
+      &::placeholder { color: $color-text-light; }
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.08);
+      }
+
+      // Hide number spinners
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      &[type=number] { -moz-appearance: textfield; }
+    }
+  }
+
+  // ── Generate Button ────────────────────────────────────
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: $color-primary;
+    color: #fff;
+    border: none;
+    border-radius: $radius-md;
+    padding: 11px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: $font-body;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+    white-space: nowrap;
+    height: 42px;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba($color-primary, 0.35);
+    }
+
+    &:active:not(:disabled) { transform: translateY(0); }
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+
+  // ── Error ──────────────────────────────────────────────
+  &__error {
+    background: rgba($color-danger, 0.08);
+    border: 1px solid rgba($color-danger, 0.2);
+    color: $color-danger;
+    padding: 10px 16px;
+    border-radius: $radius-md;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  // ── Result Section ─────────────────────────────────────
+  &__result {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding-top: 8px;
+    border-top: 1px solid $color-border;
+  }
+
+  // ── QR Image ───────────────────────────────────────────
+  &__qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+
+    img {
+      width: 200px;
+      height: 200px;
+      border: 3px solid $color-primary;
+      border-radius: $radius-md;
+      padding: 8px;
+      background: #fff;
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &__table-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $color-text;
+    background: rgba($color-primary, 0.08);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-family: $font-display;
+    margin: 0;
+  }
+
+  // ── QR Info ────────────────────────────────────────────
+  &__qr-info {
+    flex: 1;
+    min-width: 240px;
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $color-text;
+      margin: 0 0 8px;
+      font-family: $font-display;
+    }
+
+    p {
+      font-size: 0.85rem;
+      color: $color-text-muted;
+      margin: 0 0 20px;
+      line-height: 1.6;
+    }
+  }
+
+  &__scan-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  &__info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: $color-text;
+
+    span:first-child {
+      font-size: 1.1rem;
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+  }
+
+  // ── Download Buttons ───────────────────────────────────
+  &__download-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: $color-primary;
+      color: #fff;
+      border: none;
+      border-radius: $radius-md;
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: $font-body;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba($color-primary, 0.25);
+
+      &:hover { background: $color-primary-dark; }
+    }
+
+    .btn-secondary {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      color: $color-primary;
+      border: 1.5px solid $color-primary;
+      border-radius: $radius-md;
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: $font-body;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover { background: rgba($color-primary, 0.05); }
+    }
+  }
+
+  // ── Batch Section ──────────────────────────────────────
+  &__batch {
+    border-top: 1px solid $color-border;
+    padding-top: 24px;
+
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: $color-text;
+      margin: 0 0 16px;
+      font-family: $font-display;
+    }
+  }
+
+  &__batch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+
+  &__table-btn {
+    background: $color-bg;
+    color: $color-text;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-md;
+    padding: 12px 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: $font-body;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+
+    &:hover {
+      background: rgba($color-primary, 0.06);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  // ── Responsive ─────────────────────────────────────────
+  @media (max-width: 640px) {
+    &__form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__field {
+      max-width: 100%;
+    }
+
+    &__result {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &__qr-info {
+      text-align: center;
+    }
+
+    &__download-btns {
+      justify-content: center;
+    }
+
+    &__batch-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
