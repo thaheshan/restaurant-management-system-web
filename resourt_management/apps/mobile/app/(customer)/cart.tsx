@@ -98,12 +98,12 @@ export default function CartScreen() {
     router.back();
   };
 
-  const handleProceed = () => {
-    router.push({
-      pathname: '/(customer)/order-summary',
-      params: { tableId },
-    });
-  };
+const handleProceed = () => {
+  router.push({
+    pathname: '/(customer)/payment-method',
+    params: { tableId, restaurantId: params.restaurantId },
+  });
+};
 
   if (items.length === 0) {
     return (

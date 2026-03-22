@@ -25,7 +25,8 @@
         "backgroundColor": "#2B7C4F"
       },
       "package": "com.dinesmart.app",
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "usesCleartextTraffic": true
     },
     "web": {
       "favicon": "./assets/favicon.png"

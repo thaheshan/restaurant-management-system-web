@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from "react";
+
+const API_BASE = "https://unbrothered-gloria-noneruptive.ngrok-free.dev/api";
 
 export interface CustomerUser {
   id: string;
@@ -9,118 +11,129 @@ export interface CustomerUser {
 
 interface CustomerAuthContextType {
   user: CustomerUser | null;
+  token: string | null;
   isLoggedIn: boolean;
   signup: (phone: string, name: string, email?: string) => Promise<void>;
   login: (phone: string) => Promise<void>;
+  verifyOtp: (phone: string, otp: string) => Promise<void>;
   logout: () => void;
+  otpSent: boolean;
 }
 
 const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(undefined);
 
-// Mock registered users
-const MOCK_USERS: { [key: string]: CustomerUser } = {
-  '9876543210': {
-    id: 'user-1',
-    phone: '9876543210',
-    email: 'customer@example.com',
-    name: 'John Doe',
-  },
-  '9123456789': {
-    id: 'user-2',
-    phone: '9123456789',
-    email: 'customer2@example.com',
-    name: 'Jane Smith',
-  },
-};
-
-export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<CustomerUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [registeredUsers, setRegisteredUsers] = useState(MOCK_USERS);
+  const [otpSent, setOtpSent] = useState(false);
 
-  const signup = useCallback(
-    async (phone: string, name: string, email?: string) => {
-      return new Promise<void>((resolve, reject) => {
-        setTimeout(() => {
-          // Check if user already exists
-          if (registeredUsers[phone]) {
-            reject(new Error('Phone number already registered'));
-            return;
-          }
-
-          // Validate phone number (10 digits)
-          if (!/^\d{10}$/.test(phone)) {
-            reject(new Error('Phone number must be 10 digits'));
-            return;
-          }
-
-          // Create new user
-          const newUser: CustomerUser = {
-            id: `user-${Date.now()}`,
-            phone,
-            email,
-            name,
-          };
-
-          setRegisteredUsers((prev) => ({ ...prev, [phone]: newUser }));
-          setUser(newUser);
-          setIsLoggedIn(true);
-          resolve();
-        }, 800);
+  const signup = useCallback(async (phone: string, name: string, email?: string) => {
+    try {
+      console.log("Signing up with:", API_BASE, phone);
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          mobile: phone,
+          email: email || "",
+          password: phone,
+          role: "customer",
+        }),
       });
-    },
-    [registeredUsers]
-  );
+      const data = await res.json();
+      console.log("Signup response:", data);
+      if (data.success && data.token) {
+        setToken(data.token);
+        setUser({
+          id: data.user?.id || "user-1",
+          phone,
+          name: data.user?.name || name,
+          email: data.user?.email || email || "",
+        });
+        setIsLoggedIn(true);
+      } else {
+        throw new Error(data.error || "Signup failed");
+      }
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      throw new Error(err.message || "Signup failed");
+    }
+  }, []);
 
-  const login = useCallback(
-    async (phone: string) => {
-      return new Promise<void>((resolve, reject) => {
-        setTimeout(() => {
-          // Validate phone number format
-          if (!/^\d{10}$/.test(phone)) {
-            reject(new Error('Phone number must be 10 digits'));
-            return;
-          }
-
-          const foundUser = registeredUsers[phone];
-          if (!foundUser) {
-            reject(new Error('Phone number not registered. Please sign up first.'));
-            return;
-          }
-
-          setUser(foundUser);
-          setIsLoggedIn(true);
-          resolve();
-        }, 500);
+  const login = useCallback(async (phone: string) => {
+    try {
+      console.log("Sending OTP to:", phone);
+      const res = await fetch(`${API_BASE}/auth/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobileNumber: phone }),
       });
-    },
-    [registeredUsers]
-  );
+      const data = await res.json();
+      console.log("Send OTP response:", data);
+      if (data.success || data.otp) {
+        setOtpSent(true);
+        console.log("OTP:", data.otp);
+      } else {
+        throw new Error(data.error || "Failed to send OTP");
+      }
+    } catch (err: any) {
+      console.error("Login error:", err);
+      throw new Error(err.message || "Failed to send OTP");
+    }
+  }, []);
+
+  const verifyOtp = useCallback(async (phone: string, otp: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobileNumber: phone, otp }),
+      });
+      const data = await res.json();
+      console.log("Verify OTP response:", data);
+      if (data.success && data.token) {
+        setToken(data.token);
+        setUser({
+          id: data.user?.id || "user-1",
+          phone,
+          name: data.user?.name || "Customer",
+          email: data.user?.email || "",
+        });
+        setIsLoggedIn(true);
+        setOtpSent(false);
+      } else {
+        throw new Error(data.error || "Invalid OTP");
+      }
+    } catch (err: any) {
+      console.error("Verify OTP error:", err);
+      throw new Error(err.message || "OTP verification failed");
+    }
+  }, []);
 
   const logout = useCallback(() => {
     setUser(null);
+    setToken(null);
     setIsLoggedIn(false);
+    setOtpSent(false);
   }, []);
 
-  const value: CustomerAuthContextType = {
-    user,
-    isLoggedIn,
-    signup,
-    login,
-    logout,
-  };
-
   return (
-    <CustomerAuthContext.Provider value={value}>{children}</CustomerAuthContext.Provider>
+    <CustomerAuthContext.Provider value={{
+      user, token, isLoggedIn,
+      signup, login, verifyOtp,
+      logout, otpSent,
+    }}>
+      {children}
+    </CustomerAuthContext.Provider>
   );
 };
 
 export const useCustomerAuth = () => {
   const context = useContext(CustomerAuthContext);
   if (context === undefined) {
-    throw new Error('useCustomerAuth must be used within a CustomerAuthProvider');
+    throw new Error("useCustomerAuth must be used within a CustomerAuthProvider");
   }
   return context;
 };

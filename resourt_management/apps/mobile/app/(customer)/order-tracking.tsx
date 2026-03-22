@@ -1,233 +1,326 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Image,
-  FlatList,
-  TouchableOpacity,
   Alert,
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import Header from '@components/layout/Header';
-import SafeAreaContainer from '@components/layout/SafeAreaContainer';
-import StatusTracker from '@components/cards/StatusTracker';
-import Button from '@components/ui/Button';
-import Card from '@components/ui/Card';
-import { useOrder } from '@contexts/OrderContext';
-import type { OrderStatus } from '@/types';
-import { COLORS } from '@constants/colors';
-import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+  ActivityIndicator,
+} from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import Header from "@components/layout/Header";
+import SafeAreaContainer from "@components/layout/SafeAreaContainer";
+import Button from "@components/ui/Button";
+import { useCustomerAuth } from "@contexts/CustomerAuthContext";
+import { api } from "@services/api";
+import { COLORS } from "@constants/colors";
+import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from "@constants/spacing";
+
+const STATUS_STEPS = [
+  { id: "order_placed", label: "Order Placed", icon: "📋" },
+  { id: "start_prep", label: "Start Prep", icon: "👨‍🍳" },
+  { id: "in_progress", label: "In Progress", icon: "🍳" },
+  { id: "served", label: "Served", icon: "✅" },
+];
+
+const getStepIndex = (status: string) => {
+  const map: Record<string, number> = {
+    order_placed: 0,
+    start_prep: 1,
+    in_progress: 2,
+    served: 3,
+  };
+  return map[status] ?? 0;
+};
 
 export default function OrderTrackingScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const orderId = params.orderId as string;
   const tableId = params.tableId as string;
+  const restaurantId = params.restaurantId as string;
 
-  const { getCurrentOrder, updateOrderStatus } = useOrder();
-  const order = getCurrentOrder(orderId);
+  const { token } = useCustomerAuth();
+  const [status, setStatus] = useState("order_placed");
+  const [loading, setLoading] = useState(true);
+  const [minutes, setMinutes] = useState(15);
+  const [seconds, setSeconds] = useState(0);
+  const intervalRef = useRef<any>(null);
 
-  const [status, setStatus] = useState<OrderStatus>(order?.status || 'placed');
+  // Countdown timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev === 0) {
+          if (minutes === 0) {
+            clearInterval(timer);
+            return 0;
+          }
+          setMinutes((m) => m - 1);
+          return 59;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [minutes]);
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    timerCard: {
-      backgroundColor: COLORS.primary,
-      padding: SPACING.lg,
-      borderRadius: BORDER_RADIUS.lg,
-      margin: SPACING.lg,
-      alignItems: 'center',
-      marginBottom: SPACING.xl,
-    },
-    timerLabel: {
-      fontSize: FONT_SIZES.sm,
-      color: 'rgba(255, 255, 255, 0.8)',
-      marginBottom: SPACING.sm,
-    },
-    timerValue: {
-      fontSize: FONT_SIZES.xxl,
-      fontWeight: FONT_WEIGHTS.bold,
-      color: COLORS.white,
-    },
-    content: {
-      paddingHorizontal: SPACING.lg,
-      paddingVertical: SPACING.lg,
-      flex: 1,
-    },
-    statusTracker: {
-      marginBottom: SPACING.xl,
-    },
-    itemsLabel: {
-      fontSize: FONT_SIZES.lg,
-      fontWeight: FONT_WEIGHTS.bold,
-      color: COLORS.text.primary,
-      marginBottom: SPACING.md,
-    },
-    orderItem: {
-      flexDirection: 'row',
-      backgroundColor: COLORS.white,
-      borderRadius: BORDER_RADIUS.lg,
-      borderWidth: 1,
-      borderColor: COLORS.border,
-      overflow: 'hidden',
-      marginBottom: SPACING.md,
-      alignItems: 'center',
-    },
-    itemImage: {
-      width: 70,
-      height: 70,
-      backgroundColor: COLORS.gray[100],
-    },
-    itemContent: {
-      flex: 1,
-      padding: SPACING.md,
-    },
-    itemName: {
-      fontSize: FONT_SIZES.base,
-      fontWeight: FONT_WEIGHTS.semibold,
-      color: COLORS.text.primary,
-      marginBottom: SPACING.xs,
-    },
-    itemQty: {
-      fontSize: FONT_SIZES.sm,
-      color: COLORS.text.secondary,
-    },
-    illustrationContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: SPACING.xl,
-      marginBottom: SPACING.lg,
-    },
-    illustration: {
-      fontSize: 80,
-      marginBottom: SPACING.lg,
-    },
-    illustrationText: {
-      fontSize: FONT_SIZES.base,
-      color: COLORS.text.secondary,
-      textAlign: 'center',
-    },
-    buttonContainer: {
-      padding: SPACING.lg,
-      paddingBottom: SPACING.xl,
-      gap: SPACING.md,
-    },
-  });
+  // Fetch order status
+  const fetchOrderStatus = async () => {
+    if (!orderId || !token) return;
+    try {
+      const data = await api.getOrderStatus(orderId, token);
+      console.log("Order status response:", data);
+      if (data.success && data.order) {
+        setStatus(data.order.order_status);
+      }
+    } catch (err) {
+      console.error("Fetch order status error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (!order) {
+  // Poll every 5 seconds
+  useEffect(() => {
+    fetchOrderStatus();
+    intervalRef.current = setInterval(fetchOrderStatus, 5000);
+    return () => clearInterval(intervalRef.current);
+  }, [orderId, token]);
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const currentStepIndex = getStepIndex(status);
+
+  if (loading) {
     return (
       <>
-        <Header title="Order Tracking" showBackButton onBackPress={() => router.back()} />
-        <SafeAreaContainer>
-          <View style={styles.content}>
-            <Text style={styles.itemsLabel}>Order not found</Text>
-            <Button title="Go Back" onPress={() => router.back()} />
-          </View>
-        </SafeAreaContainer>
+        <Header title="Order Status" showBackButton onBackPress={() => router.back()} />
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
       </>
     );
   }
 
-  // Simulate status updates for demo
-  useEffect(() => {
-    const statusSequence: OrderStatus[] = ['placed', 'prep', 'in-progress', 'served'];
-    const currentIndex = statusSequence.indexOf(status);
-
-    const timer = setTimeout(() => {
-      if (currentIndex < statusSequence.length - 1) {
-        const nextStatus = statusSequence[currentIndex + 1];
-        setStatus(nextStatus);
-        updateOrderStatus(orderId, nextStatus);
-      }
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [status]);
-
-  const handleProceedToBill = () => {
-    if (status === 'served') {
-      router.push({
-        pathname: '/(customer)/order-history',
-        params: { tableId },
-      });
-    } else {
-      Alert.alert('Order Not Ready', 'Your order is still being prepared. Please wait.');
-    }
-  };
-
-  const minRemaining = Math.max(order.estimatedTime - Math.floor(Math.random() * 15), 0);
-
   return (
     <>
       <Header title="Order Status" showBackButton onBackPress={() => router.back()} />
-      <SafeAreaContainer style={styles.container} scrollable>
-        {/* Estimated Time */}
-        <Card style={styles.timerCard}>
-          <Text style={styles.timerLabel}>Estimated Wait Time</Text>
-          <Text style={styles.timerValue}>{minRemaining} min</Text>
-        </Card>
+      <SafeAreaContainer scrollable>
 
-        <View style={styles.content}>
-          {/* Status Tracker */}
-          <StatusTracker currentStatus={status} style={styles.statusTracker} />
-
-          {/* Illustration */}
-          <View style={styles.illustrationContainer}>
-            <Text style={styles.illustration}>👨‍🍳</Text>
-            <Text style={styles.illustrationText}>Your delicious food is being prepared</Text>
+        {/* Timer */}
+        <View style={{
+          backgroundColor: COLORS.primary,
+          margin: SPACING.lg,
+          borderRadius: BORDER_RADIUS.xl,
+          padding: SPACING.xl,
+          alignItems: "center",
+        }}>
+          <Text style={{
+            fontSize: FONT_SIZES.sm,
+            color: "rgba(255,255,255,0.8)",
+            marginBottom: SPACING.xs,
+          }}>
+            Estimated waiting time
+          </Text>
+          <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4 }}>
+            <Text style={{ fontSize: 32, fontWeight: FONT_WEIGHTS.bold, color: COLORS.white }}>
+              {pad(minutes)}
+            </Text>
+            <Text style={{ fontSize: FONT_SIZES.sm, color: "rgba(255,255,255,0.7)" }}>Min</Text>
+            <Text style={{ fontSize: 32, fontWeight: FONT_WEIGHTS.bold, color: COLORS.white }}>:</Text>
+            <Text style={{ fontSize: 32, fontWeight: FONT_WEIGHTS.bold, color: COLORS.white }}>
+              {pad(seconds)}
+            </Text>
+            <Text style={{ fontSize: FONT_SIZES.sm, color: "rgba(255,255,255,0.7)" }}>Sec</Text>
           </View>
+        </View>
 
-          {/* Order Items */}
-          <Text style={styles.itemsLabel}>Your Order</Text>
-          <FlatList
-            data={order.items}
-            renderItem={({ item }) => (
-              <View style={styles.orderItem}>
-                <Image source={{ uri: item.image }} style={styles.itemImage} />
-                <View style={styles.itemContent}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
+        {/* Status Tracker */}
+        <View style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginHorizontal: SPACING.lg,
+          marginBottom: SPACING.xl,
+        }}>
+          {STATUS_STEPS.map((step, index) => (
+            <View key={step.id} style={{ alignItems: "center", flex: 1 }}>
+              <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
+                justifyContent: "center",
+                position: "relative",
+              }}>
+                {index > 0 && (
+                  <View style={{
+                    position: "absolute",
+                    left: 0,
+                    right: "50%",
+                    height: 3,
+                    backgroundColor: index <= currentStepIndex
+                      ? COLORS.primary : COLORS.gray[200],
+                  }} />
+                )}
+                <View style={{
+                  width: 36, height: 36,
+                  borderRadius: 18,
+                  backgroundColor: index <= currentStepIndex
+                    ? COLORS.primary : COLORS.white,
+                  borderWidth: 3,
+                  borderColor: index <= currentStepIndex
+                    ? COLORS.primary : COLORS.gray[200],
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 1,
+                }}>
+                  <Text style={{
+                    color: index <= currentStepIndex ? COLORS.white : COLORS.gray[400],
+                    fontSize: 12,
+                    fontWeight: FONT_WEIGHTS.bold,
+                  }}>
+                    {index <= currentStepIndex ? "✓" : (index + 1).toString()}
+                  </Text>
                 </View>
+                {index < STATUS_STEPS.length - 1 && (
+                  <View style={{
+                    position: "absolute",
+                    left: "50%",
+                    right: 0,
+                    height: 3,
+                    backgroundColor: index < currentStepIndex
+                      ? COLORS.primary : COLORS.gray[200],
+                  }} />
+                )}
               </View>
-            )}
-            keyExtractor={(item) => item.id}
-            scrollEnabled={false}
+              <Text style={{
+                fontSize: FONT_SIZES.xs,
+                color: index <= currentStepIndex
+                  ? COLORS.text.primary : COLORS.text.secondary,
+                fontWeight: index <= currentStepIndex
+                  ? FONT_WEIGHTS.semibold : FONT_WEIGHTS.regular,
+                textAlign: "center",
+                marginTop: SPACING.xs,
+              }}>
+                {step.label}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Current Status */}
+        <View style={{
+          marginHorizontal: SPACING.lg,
+          padding: SPACING.md,
+          backgroundColor: status === "served"
+            ? "rgba(76,175,80,0.1)" : "rgba(43,124,79,0.1)",
+          borderRadius: BORDER_RADIUS.lg,
+          marginBottom: SPACING.lg,
+          alignItems: "center",
+        }}>
+          <Text style={{
+            fontSize: FONT_SIZES.base,
+            fontWeight: FONT_WEIGHTS.semibold,
+            color: COLORS.primary,
+          }}>
+            {status === "order_placed" && "⏳ Your order has been placed!"}
+            {status === "start_prep" && "👨‍🍳 Kitchen is preparing your order!"}
+            {status === "in_progress" && "🍳 Your food is being cooked!"}
+            {status === "served" && "✅ Your order is ready!"}
+          </Text>
+          <Text style={{
+            fontSize: FONT_SIZES.xs,
+            color: COLORS.text.secondary,
+            marginTop: 4,
+          }}>
+            Auto-updating every 5 seconds
+          </Text>
+        </View>
+
+        {/* Illustration */}
+        <View style={{ alignItems: "center", marginBottom: SPACING.xl }}>
+          <Image
+            source={{
+              uri: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&h=400&fit=crop",
+            }}
+            style={{
+              width: "90%",
+              aspectRatio: 16 / 9,
+              borderRadius: BORDER_RADIUS.xl,
+            }}
           />
         </View>
 
-        {/* Action Buttons */}
-        <View style={styles.buttonContainer}>
-          {status === 'served' ? (
-            <>
-              <Button
-                title="View Bill"
-                size="large"
-                onPress={handleProceedToBill}
-              />
-              <Button
-                title="Order History"
-                variant="secondary"
-                size="large"
-                onPress={() =>
-                  router.push({
-                    pathname: '/(customer)/order-history',
-                    params: { tableId },
-                  })
-                }
-              />
-            </>
-          ) : (
-            <Button
-                title="Preparing... (Status auto-updates)"
-                size="large"
-                disabled onPress={function (): void {
-                  throw new Error('Function not implemented.');
-                } }            />
-          )}
+        {/* Order Info */}
+        <View style={{
+          marginHorizontal: SPACING.lg,
+          padding: SPACING.md,
+          backgroundColor: COLORS.surface,
+          borderRadius: BORDER_RADIUS.lg,
+          marginBottom: SPACING.lg,
+        }}>
+          <Text style={{
+            fontSize: FONT_SIZES.sm,
+            color: COLORS.text.secondary,
+            textAlign: "center",
+          }}>
+            Order ID: {orderId?.slice(0, 8)}... | Table: {tableId}
+          </Text>
         </View>
+
+        {/* Buttons */}
+{/* Buttons */}
+<View style={{
+  paddingHorizontal: SPACING.lg,
+  paddingBottom: SPACING.xl,
+  gap: SPACING.md,
+}}>
+  {status === "served" ? (
+    <>
+      <Button
+        title="✅ Order Complete - View History"
+        size="large"
+        onPress={() => router.push({
+          pathname: "/(customer)/order-history",
+          params: { tableId, restaurantId },
+        })}
+      />
+      <Button
+        title="🍽 Order More Items"
+        variant="secondary"
+        size="large"
+        onPress={() => router.push({
+          pathname: "/(customer)/menu-categories",
+          params: { tableId, restaurantId },
+        })}
+      />
+    </>
+  ) : (
+    <>
+      <Button
+        title="🍽 Order More Items"
+        size="large"
+        onPress={() => router.push({
+          pathname: "/(customer)/menu-categories",
+          params: { tableId, restaurantId },
+        })}
+      />
+      <Button
+        title="🔄 Refresh Status"
+        variant="secondary"
+        size="large"
+        onPress={fetchOrderStatus}
+      />
+    </>
+  )}
+  <Button
+    title="Order History"
+    variant="secondary"
+    size="large"
+    onPress={() => router.push({
+      pathname: "/(customer)/order-history",
+      params: { tableId, restaurantId },
+    })}
+  />
+</View>
       </SafeAreaContainer>
     </>
   );
