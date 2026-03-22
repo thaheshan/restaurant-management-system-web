@@ -1,13 +1,12 @@
-const BASE_URL = "https://forty-cobras-fail.loca.lt/api";
-const RESTAURANT_URL = "https://afraid-adults-allow.loca.lt";
+const BASE_URL = "https://unbrothered-gloria-noneruptive.ngrok-free.dev/api";
+const RESTAURANT_URL = "https://unbrothered-gloria-noneruptive.ngrok-free.dev/api/restaurant/public";
 
 const tunnelFetch = async (url: string, options: any = {}) => {
   const res = await fetch(url, {
     ...options,
     headers: {
       ...options.headers,
-      "bypass-tunnel-reminder": "true",
-      "User-Agent": "DineSmart-Mobile/1.0",
+      "ngrok-skip-browser-warning": "true",
     },
   });
   const text = await res.text();
@@ -21,16 +20,16 @@ const tunnelFetch = async (url: string, options: any = {}) => {
 
 export const api = {
   getCategories: async (restaurantId: string) => {
-    return tunnelFetch(`${RESTAURANT_URL}/public/categories/${restaurantId}`);
+    return tunnelFetch(`${RESTAURANT_URL}/categories/${restaurantId}`);
   },
   getCategoryItems: async (categoryId: string) => {
-    return tunnelFetch(`${RESTAURANT_URL}/public/category/${categoryId}/items`);
+    return tunnelFetch(`${RESTAURANT_URL}/category/${categoryId}/items`);
   },
   getItemDetail: async (itemId: string) => {
-    return tunnelFetch(`${RESTAURANT_URL}/public/item/${itemId}`);
+    return tunnelFetch(`${RESTAURANT_URL}/item/${itemId}`);
   },
   scanQR: async (restaurantId: string, tableNumber: string) => {
-    return tunnelFetch(`${RESTAURANT_URL}/public/scan?restaurantId=${restaurantId}&tableNumber=${tableNumber}`);
+    return tunnelFetch(`${RESTAURANT_URL}/scan?restaurantId=${restaurantId}&tableNumber=${tableNumber}`);
   },
   placeOrder: async (orderData: any, token: string) => {
     return tunnelFetch(`${BASE_URL}/orders/place`, {
