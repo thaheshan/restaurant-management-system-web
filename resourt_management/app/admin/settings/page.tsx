@@ -1,10 +1,10 @@
 import DashboardLayout from '@/components/DashboardLayout/MainDashboard';
-import QRGenerator from '@/app/src/pages/QRGenerator/QRGenerator';
+import Settings from '@/app/src/pages/Settings/Settings';
 
 export default function SettingsPage() {
   return (
-    <DashboardLayout title="QR Code Generator">
-      <QRGenerator />
+    <DashboardLayout title="Settings">
+      <Settings />
     </DashboardLayout>
   );
 }

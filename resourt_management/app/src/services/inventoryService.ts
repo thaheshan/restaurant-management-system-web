@@ -13,6 +13,14 @@ const inventoryService = {
     const res = await api.put(`/inventory/${id}`, data);
     return res.data;
   },
+  updateUsage: async (id: string, amount: number, type: 'add' | 'remove') => {
+    const res = await api.post(`/inventory/${id}/usage`, { amount, type });
+    return res.data;
+  },
+  delete: async (id: string) => {
+    const res = await api.delete(`/inventory/${id}`);
+    return res.data;
+  },
   getExpiryAlerts: async (restaurantId: string) => {
     const res = await api.get(`/inventory/restaurant/${restaurantId}/expiry-alerts`);
     return res.data;

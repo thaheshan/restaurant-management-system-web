@@ -37,20 +37,38 @@ export const fetchDashboardData = createAsyncThunk(
   'dashboard/fetchAll',
   async (restaurantId: string, { rejectWithValue }) => {
     try {
-      const [inventoryStats, hygieneData, expiryData] = await Promise.all([
+      const [inventoryStats, inventoryAll, hygieneData, expiryData] = await Promise.all([
         inventoryService.getStats(restaurantId),
+        inventoryService.getAll(restaurantId),
         hygieneService.getDashboard(restaurantId),
         expiryService.getAll(restaurantId),
       ]);
 
+      // Count from real inventory data using actual stock_level values
+      const allItems = inventoryAll?.inventory || inventoryAll?.ingredients || [];
+      const criticalCount = allItems.filter((i: any) =>
+        (i.stock_level || '').toLowerCase() === 'critical'
+      ).length;
+      const lowCount = allItems.filter((i: any) =>
+        ['low', 'low_stock'].includes((i.stock_level || '').toLowerCase())
+      ).length;
+
+      // totalItems from stats API, fallback to array length
+      const totalInventory =
+        inventoryStats?.stats?.totalItems ||
+        inventoryStats?.stats?.total ||
+        allItems.length ||
+        0;
+
       return {
         stats: {
-          totalInventory: inventoryStats?.stats?.total || 0,
-          inStock: inventoryStats?.stats?.inStock || 0,
-          lowStock: inventoryStats?.stats?.lowStock || 0,
-          critical: inventoryStats?.stats?.critical || 0,
-          hygieneDone:
-            hygieneData?.dashboard?.sanitizationLogs?.length || 0,
+          totalInventory,
+          inStock: allItems.filter((i: any) =>
+            ['ok', 'normal', 'fresh', 'in_stock'].includes((i.stock_level || '').toLowerCase())
+          ).length,
+          lowStock: lowCount,
+          critical: criticalCount,
+          hygieneDone: hygieneData?.dashboard?.sanitizationLogs?.length || 0,
           expiryAlerts: expiryData?.expiringItems?.length || 0,
         },
         recentActivity: [],

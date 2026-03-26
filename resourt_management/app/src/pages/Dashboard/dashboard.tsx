@@ -23,25 +23,29 @@ const activityColor: Record<string, string> = {
 };
 
 const getRestaurantId = () => {
-  const session = localStorage.getItem('adminSession');
-  if (session) {
-    const parsed = JSON.parse(session);
-    return parsed.user?.restaurantId || parsed.restaurantId || '';
-  }
+  try {
+    const session = localStorage.getItem('adminSession');
+    if (session) {
+      const parsed = JSON.parse(session);
+      return parsed.user?.restaurantId || parsed.restaurantId || '';
+    }
+  } catch {}
   return '';
 };
 
-const getStatusColor = (status: string) => {
-  const s = status?.toLowerCase();
-  if (s === 'ok' || s === 'in_stock' || s === 'in stock') return '#2d5a3d';
-  if (s === 'low' || s === 'low_stock' || s === 'low stock') return '#e67e22';
-  return '#e74c3c';
+const getStatusColor = (stockLevel: string) => {
+  const s = (stockLevel || '').toLowerCase();
+  if (['ok', 'normal', 'fresh', 'in_stock'].includes(s)) return '#2d5a3d';
+  if (['low', 'low_stock'].includes(s)) return '#e67e22';
+  if (s === 'critical') return '#e74c3c';
+  return '#e67e22';
 };
 
-const getStatusLabel = (status: string) => {
-  const s = status?.toLowerCase();
-  if (s === 'ok' || s === 'in_stock') return 'In Stock';
-  if (s === 'low' || s === 'low_stock') return 'Low Stock';
+const getStatusLabel = (stockLevel: string) => {
+  const s = (stockLevel || '').toLowerCase();
+  if (['ok', 'normal', 'fresh', 'in_stock'].includes(s)) return 'In Stock';
+  if (['low', 'low_stock'].includes(s)) return 'Low Stock';
+  if (s === 'critical') return 'Critical';
   return 'Reorder';
 };
 
@@ -103,117 +107,72 @@ const Dashboard = () => {
     },
   ];
 
-  // Use real inventory for snapshot, fallback to first 4 items
   const inventorySnapshot = inventoryItems.slice(0, 4).map((item: any) => ({
     name: item.name,
-    stock: `${item.quantity ?? item.stock ?? 0} ${item.unit || 'kg'}`,
-    status: getStatusLabel(item.status || item.stock_level || 'ok'),
-    color: getStatusColor(item.status || item.stock_level || 'ok'),
+    stock: `${parseFloat(item.quantity ?? item.stock ?? 0).toFixed(2)} ${item.unit || 'kg'}`,
+    status: getStatusLabel(item.stock_level || item.status || 'ok'),
+    color: getStatusColor(item.stock_level || item.status || 'ok'),
   }));
 
-  // Use real hygiene data for certification
   const latestCert = certifications?.[0];
   const latestLog = sanitizationLogs?.[0];
 
-  // Build recent activity from real data
   const builtActivity = [
     ...inventoryItems.slice(0, 2).map((item: any, i: number) => ({
       id: `inv-${i}`,
       action: `${item.name} stock tracked`,
       time: 'Recently',
-      type: 'inventory',
+      type: 'inventory' as const,
     })),
-    ...(latestLog
-      ? [
-          {
-            id: 'hyg-1',
-            action: `${latestLog.session_type || 'Sanitization'} logged`,
-            time: latestLog.date_logged
-              ? new Date(latestLog.date_logged).toLocaleDateString()
-              : 'Recently',
-            type: 'hygiene',
-          },
-        ]
-      : []),
-    ...(latestCert
-      ? [
-          {
-            id: 'cert-1',
-            action: `${latestCert.certification_name || 'Certification'} active`,
-            time: latestCert.issue_date
-              ? new Date(latestCert.issue_date).toLocaleDateString()
-              : 'Recently',
-            type: 'hygiene',
-          },
-        ]
-      : []),
+    ...(latestLog ? [{
+      id: 'hyg-1',
+      action: `${latestLog.session_type || 'Sanitization'} logged`,
+      time: latestLog.date_logged ? new Date(latestLog.date_logged).toLocaleDateString() : 'Recently',
+      type: 'hygiene' as const,
+    }] : []),
+    ...(latestCert ? [{
+      id: 'cert-1',
+      action: `${latestCert.certification_name || 'Certification'} active`,
+      time: latestCert.issue_date ? new Date(latestCert.issue_date).toLocaleDateString() : 'Recently',
+      type: 'hygiene' as const,
+    }] : []),
   ];
 
-  const activityToShow =
-    builtActivity.length > 0
-      ? builtActivity
-      : recentActivity.length > 0
-      ? recentActivity
-      : [
-          { id: '1', action: 'No recent activity', time: '', type: 'inventory' },
-        ];
+  const activityToShow = builtActivity.length > 0
+    ? builtActivity
+    : recentActivity.length > 0
+    ? recentActivity
+    : [{ id: '1', action: 'No recent activity', time: '', type: 'inventory' as const }];
 
   return (
     <div className="dashboard">
-      {/* Loading */}
       {dashLoading && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '20px',
-            color: '#718096',
-            fontSize: '0.9rem',
-          }}
-        >
+        <div style={{ textAlign: 'center', padding: '20px', color: '#718096', fontSize: '0.9rem' }}>
           Loading dashboard...
         </div>
       )}
 
-      {/* Summary Cards */}
       <div className="dashboard__summary">
         {summaryCards.map((card) => (
           <div key={card.label} className="dashboard__card">
-            <span
-              className="dashboard__card-icon"
-              style={{ color: card.color }}
-            >
-              {card.icon}
-            </span>
+            <span className="dashboard__card-icon" style={{ color: card.color }}>{card.icon}</span>
             <div className="dashboard__card-info">
               <span className="dashboard__card-label">{card.label}</span>
-              <span
-                className="dashboard__card-value"
-                style={{ color: card.color }}
-              >
-                {card.value}
-              </span>
+              <span className="dashboard__card-value" style={{ color: card.color }}>{card.value}</span>
             </div>
           </div>
         ))}
       </div>
 
       <div className="dashboard__bottom">
-        {/* Recent Activity */}
         <div className="dashboard__activity">
           <h3 className="dashboard__section-title">Recent Activity</h3>
           <div className="dashboard__activity-list">
             {activityToShow.map((item) => (
               <div key={item.id} className="dashboard__activity-item">
-                <span
-                  className="dashboard__activity-dot"
-                  style={{
-                    background: activityColor[item.type] || '#718096',
-                  }}
-                />
+                <span className="dashboard__activity-dot" style={{ background: activityColor[item.type] || '#718096' }} />
                 <div className="dashboard__activity-info">
-                  <span className="dashboard__activity-action">
-                    {item.action}
-                  </span>
+                  <span className="dashboard__activity-action">{item.action}</span>
                   <span className="dashboard__activity-time">{item.time}</span>
                 </div>
               </div>
@@ -221,44 +180,25 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Inventory Snapshot */}
         <div className="dashboard__snapshot">
           <h3 className="dashboard__section-title">Inventory Snapshot</h3>
           <div className="dashboard__snapshot-table-wrapper">
             {inventorySnapshot.length === 0 ? (
-              <p
-                style={{
-                  color: '#718096',
-                  fontSize: '0.85rem',
-                  padding: '16px',
-                }}
-              >
-                No inventory data yet.
-              </p>
+              <p style={{ color: '#718096', fontSize: '0.85rem', padding: '16px' }}>No inventory data yet.</p>
             ) : (
               <table className="dashboard__snapshot-table">
                 <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Stock</th>
-                    <th>Status</th>
-                  </tr>
+                  <tr><th>Item</th><th>Stock</th><th>Status</th></tr>
                 </thead>
                 <tbody>
-                  {inventorySnapshot.map((item) => (
-                    <tr key={item.name}>
+                  {inventorySnapshot.map((item, idx) => (
+                    <tr key={idx}>
                       <td className="dashboard__snapshot-name">
-                        <span>🥘</span> {item.name}
+                        <span>&#x1F372;</span> {item.name}
                       </td>
                       <td>{item.stock}</td>
                       <td>
-                        <span
-                          className="dashboard__snapshot-badge"
-                          style={{
-                            color: item.color,
-                            background: `${item.color}14`,
-                          }}
-                        >
+                        <span className="dashboard__snapshot-badge" style={{ color: item.color, background: `${item.color}14` }}>
                           {item.status}
                         </span>
                       </td>
@@ -270,7 +210,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Hygiene Status */}
         <div className="dashboard__hygiene">
           <h3 className="dashboard__section-title">Hygiene Status</h3>
           <div className="dashboard__hygiene-card">
@@ -278,51 +217,24 @@ const Dashboard = () => {
               <>
                 <div className="dashboard__hygiene-header">
                   <div>
-                    <h4 className="dashboard__hygiene-name">
-                      {latestCert.certification_name || 'Certification'}
-                    </h4>
+                    <h4 className="dashboard__hygiene-name">{latestCert.certification_name || 'Certification'}</h4>
                     <span className="dashboard__hygiene-status">
-                      <FaCheckCircle />{' '}
-                      {latestCert.certification_level || 'Standard'}
+                      <FaCheckCircle /> {latestCert.certification_level || 'Standard'}
                     </span>
                   </div>
-                  <div className="dashboard__hygiene-badge">
-                    <FaShieldAlt />
-                  </div>
+                  <div className="dashboard__hygiene-badge"><FaShieldAlt /></div>
                 </div>
                 <div className="dashboard__hygiene-dates">
                   <div>
-                    <span className="dashboard__hygiene-date-label">
-                      Issued
-                    </span>
+                    <span className="dashboard__hygiene-date-label">Issued</span>
                     <span className="dashboard__hygiene-date-value">
-                      {latestCert.issue_date
-                        ? new Date(latestCert.issue_date).toLocaleDateString(
-                            'en-US',
-                            {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            }
-                          )
-                        : 'N/A'}
+                      {latestCert.issue_date ? new Date(latestCert.issue_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                     </span>
                   </div>
                   <div>
-                    <span className="dashboard__hygiene-date-label">
-                      Expires
-                    </span>
+                    <span className="dashboard__hygiene-date-label">Expires</span>
                     <span className="dashboard__hygiene-date-value">
-                      {latestCert.expiry_date
-                        ? new Date(latestCert.expiry_date).toLocaleDateString(
-                            'en-US',
-                            {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            }
-                          )
-                        : 'N/A'}
+                      {latestCert.expiry_date ? new Date(latestCert.expiry_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                     </span>
                   </div>
                 </div>
@@ -330,16 +242,10 @@ const Dashboard = () => {
             ) : (
               <div className="dashboard__hygiene-header">
                 <div>
-                  <h4 className="dashboard__hygiene-name">
-                    No Certification Found
-                  </h4>
-                  <span className="dashboard__hygiene-status">
-                    <FaCheckCircle /> Add a certification in Hygiene
-                  </span>
+                  <h4 className="dashboard__hygiene-name">No Certification Found</h4>
+                  <span className="dashboard__hygiene-status"><FaCheckCircle /> Add a certification in Hygiene</span>
                 </div>
-                <div className="dashboard__hygiene-badge">
-                  <FaShieldAlt />
-                </div>
+                <div className="dashboard__hygiene-badge"><FaShieldAlt /></div>
               </div>
             )}
           </div>
