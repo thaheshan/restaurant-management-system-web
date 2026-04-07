@@ -12,6 +12,7 @@ import {
 import { useRouter, useLocalSearchParams } from "expo-router";
 import SafeAreaContainer from "@components/layout/SafeAreaContainer";
 import Header from "@components/layout/Header";
+import { ClipboardList, ShoppingBag, LogOut } from 'lucide-react-native';
 import { api } from "@services/api";
 import { useCart } from "@contexts/CartContext";
 import { useCustomerAuth } from "@contexts/CustomerAuthContext";
@@ -115,7 +116,7 @@ export default function MenuCategoriesScreen() {
           justifyContent: "center",
         }}
       >
-        <Text style={{ fontSize: 18 }}>📋</Text>
+        <ClipboardList size={20} color={COLORS.white} />
       </TouchableOpacity>
 
       {/* Cart with badge */}
@@ -132,7 +133,7 @@ export default function MenuCategoriesScreen() {
           justifyContent: "center",
         }}
       >
-        <Text style={{ fontSize: 18 }}>🛒</Text>
+        <ShoppingBag size={20} color={COLORS.white} />
         {cartCount > 0 && (
           <View style={{
             position: "absolute",
@@ -161,7 +162,7 @@ export default function MenuCategoriesScreen() {
           justifyContent: "center",
         }}
       >
-        <Text style={{ fontSize: 18 }}>🚪</Text>
+        <LogOut size={20} color={COLORS.white} />
       </TouchableOpacity>
     </View>
   );

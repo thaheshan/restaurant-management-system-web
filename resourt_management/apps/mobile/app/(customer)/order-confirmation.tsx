@@ -9,6 +9,12 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
+import { 
+  CheckCircle2, 
+  Clock, 
+  ClipboardList, 
+  History 
+} from 'lucide-react-native';
 import { useOrder } from '@contexts/OrderContext';
 import { useCart } from '@contexts/CartContext';
 import { COLORS } from '@constants/colors';
@@ -135,7 +141,7 @@ export default function OrderConfirmationScreen() {
   return (
     <SafeAreaContainer style={styles.container} scrollable>
       <View style={styles.content}>
-        <Text style={styles.successIcon}>✓</Text>
+        <CheckCircle2 size={80} color={COLORS.primary} strokeWidth={1.5} style={{ marginBottom: SPACING.md }} />
         <Text style={styles.title}>Order Placed Successfully!</Text>
         <Text style={styles.subtitle}>Thank you for your order</Text>
 
@@ -171,6 +177,7 @@ export default function OrderConfirmationScreen() {
 
         {/* Estimated Time */}
         <View style={styles.estimatedTimeContainer}>
+          <Clock size={24} color={COLORS.white} style={{ marginBottom: SPACING.xs }} />
           <Text style={styles.estimatedTimeLabel}>ESTIMATED WAIT TIME</Text>
           <Text style={styles.estimatedTime}>{order.estimatedTime} min</Text>
         </View>
@@ -181,12 +188,14 @@ export default function OrderConfirmationScreen() {
         <Button
           title="Track Your Order"
           size="large"
+          icon={<ClipboardList size={20} color={COLORS.white} />}
           onPress={handleTrackOrder}
         />
         <Button
           title="Order History"
           variant="secondary"
           size="large"
+          icon={<History size={20} color={COLORS.text.primary} />}
           onPress={() =>
             router.push({
               pathname: '/(customer)/order-history',

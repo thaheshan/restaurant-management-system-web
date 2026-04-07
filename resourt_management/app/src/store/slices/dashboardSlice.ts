@@ -44,14 +44,14 @@ export const fetchDashboardData = createAsyncThunk(
         expiryService.getAll(restaurantId),
       ]);
 
-      // Count from real inventory data using actual stock_level values
+      // Count based on real numerical quantities
       const allItems = inventoryAll?.inventory || inventoryAll?.ingredients || [];
-      const criticalCount = allItems.filter((i: any) =>
-        (i.stock_level || '').toLowerCase() === 'critical'
-      ).length;
-      const lowCount = allItems.filter((i: any) =>
-        ['low', 'low_stock'].includes((i.stock_level || '').toLowerCase())
-      ).length;
+      const criticalCount = allItems.filter((i: any) => parseFloat(i.quantity ?? 0) <= 0).length;
+      const lowCount = allItems.filter((i: any) => {
+        const qty = parseFloat(i.quantity ?? 0);
+        return qty > 0 && qty < 2;
+      }).length;
+      const inStockCount = allItems.filter((i: any) => parseFloat(i.quantity ?? 0) >= 2).length;
 
       // totalItems from stats API, fallback to array length
       const totalInventory =
@@ -63,9 +63,7 @@ export const fetchDashboardData = createAsyncThunk(
       return {
         stats: {
           totalInventory,
-          inStock: allItems.filter((i: any) =>
-            ['ok', 'normal', 'fresh', 'in_stock'].includes((i.stock_level || '').toLowerCase())
-          ).length,
+          inStock: inStockCount,
           lowStock: lowCount,
           critical: criticalCount,
           hygieneDone: hygieneData?.dashboard?.sanitizationLogs?.length || 0,

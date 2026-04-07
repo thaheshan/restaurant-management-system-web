@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TextStyle,
   ActivityIndicator,
+  View,
 } from 'react-native';
 import { COLORS } from '@constants/colors';
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
@@ -116,7 +117,7 @@ const Button: React.FC<ButtonProps> = ({
         <ActivityIndicator color={variant === 'outline' ? COLORS.primary : COLORS.white} />
       ) : (
         <>
-          {icon && <Text style={{ marginRight: SPACING.sm }}>{icon}</Text>}
+          {icon && <View style={{ marginRight: SPACING.sm }}>{icon}</View>}
           <Text style={[getTextStyle(), textStyle]}>{title}</Text>
         </>
       )}

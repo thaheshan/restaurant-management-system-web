@@ -10,16 +10,27 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import Header from "@components/layout/Header";
 import SafeAreaContainer from "@components/layout/SafeAreaContainer";
 import Button from "@components/ui/Button";
+import { 
+  ClipboardList, 
+  ChefHat, 
+  CookingPot, 
+  CheckCircle, 
+  Clock, 
+  UtensilsCrossed, 
+  RefreshCw,
+  Check,
+  Bell
+} from 'lucide-react-native';
 import { useCustomerAuth } from "@contexts/CustomerAuthContext";
 import { api } from "@services/api";
 import { COLORS } from "@constants/colors";
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from "@constants/spacing";
 
 const STATUS_STEPS = [
-  { id: "order_placed", label: "Order Placed", icon: "📋" },
-  { id: "start_prep", label: "Start Prep", icon: "👨‍🍳" },
-  { id: "in_progress", label: "In Progress", icon: "🍳" },
-  { id: "served", label: "Served", icon: "✅" },
+  { id: "order_placed", label: "Order Placed", Icon: ClipboardList },
+  { id: "start_prep", label: "Start Prep", Icon: ChefHat },
+  { id: "in_progress", label: "In Progress", Icon: CookingPot },
+  { id: "served", label: "Served", Icon: CheckCircle },
 ];
 
 const getStepIndex = (status: string) => {
@@ -41,10 +52,31 @@ export default function OrderTrackingScreen() {
 
   const { token } = useCustomerAuth();
   const [status, setStatus] = useState("order_placed");
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [minutes, setMinutes] = useState(15);
   const [seconds, setSeconds] = useState(0);
   const intervalRef = useRef<any>(null);
+  const [requestingAssistant, setRequestingAssistant] = useState(false);
+
+  const handleRequestAssistant = async () => {
+    if (!orderId || !token) return;
+    
+    setRequestingAssistant(true);
+    try {
+      const res = await api.requestAssistant(orderId, token);
+      if (res.success) {
+        Alert.alert("Assistant Requested", "A waiter will be with you shortly.");
+      } else {
+        Alert.alert("Request Failed", res.error || "Could not call for assistance. Please try again.");
+      }
+    } catch (err) {
+      console.error("Request assistant error:", err);
+      Alert.alert("Error", "Something went wrong. Please call a waiter manually.");
+    } finally {
+      setRequestingAssistant(false);
+    }
+  };
 
   // Countdown timer
   useEffect(() => {
@@ -66,12 +98,16 @@ export default function OrderTrackingScreen() {
 
   // Fetch order status
   const fetchOrderStatus = async () => {
-    if (!orderId || !token) return;
+    if (!orderId || !token) {
+      setLoading(false);
+      return;
+    }
     try {
       const data = await api.getOrderStatus(orderId, token);
       console.log("Order status response:", data);
       if (data.success && data.order) {
         setStatus(data.order.order_status);
+        setTotal(data.order.grand_total);
       }
     } catch (err) {
       console.error("Fetch order status error:", err);
@@ -177,7 +213,7 @@ export default function OrderTrackingScreen() {
                     fontSize: 12,
                     fontWeight: FONT_WEIGHTS.bold,
                   }}>
-                    {index <= currentStepIndex ? "✓" : (index + 1).toString()}
+                    {index <= currentStepIndex ? <Check size={18} color={COLORS.white} strokeWidth={4} /> : (index + 1).toString()}
                   </Text>
                 </View>
                 {index < STATUS_STEPS.length - 1 && (
@@ -216,16 +252,22 @@ export default function OrderTrackingScreen() {
           marginBottom: SPACING.lg,
           alignItems: "center",
         }}>
-          <Text style={{
-            fontSize: FONT_SIZES.base,
-            fontWeight: FONT_WEIGHTS.semibold,
-            color: COLORS.primary,
-          }}>
-            {status === "order_placed" && "⏳ Your order has been placed!"}
-            {status === "start_prep" && "👨‍🍳 Kitchen is preparing your order!"}
-            {status === "in_progress" && "🍳 Your food is being cooked!"}
-            {status === "served" && "✅ Your order is ready!"}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            {status === "order_placed" && <Clock size={20} color={COLORS.primary} />}
+            {status === "start_prep" && <ChefHat size={20} color={COLORS.primary} />}
+            {status === "in_progress" && <CookingPot size={20} color={COLORS.primary} />}
+            {status === "served" && <CheckCircle size={20} color={COLORS.primary} />}
+            <Text style={{
+              fontSize: FONT_SIZES.base,
+              fontWeight: FONT_WEIGHTS.semibold,
+              color: COLORS.primary,
+            }}>
+              {status === "order_placed" && "Your order has been placed!"}
+              {status === "start_prep" && "Kitchen is preparing your order!"}
+              {status === "in_progress" && "Your food is being cooked!"}
+              {status === "served" && "Your order is ready!"}
+            </Text>
+          </View>
           <Text style={{
             fontSize: FONT_SIZES.xs,
             color: COLORS.text.secondary,
@@ -238,9 +280,7 @@ export default function OrderTrackingScreen() {
         {/* Illustration */}
         <View style={{ alignItems: "center", marginBottom: SPACING.xl }}>
           <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&h=400&fit=crop",
-            }}
+            source={require("../../assets/images/progresss-tracking.png")}
             style={{
               width: "90%",
               aspectRatio: 16 / 9,
@@ -267,60 +307,73 @@ export default function OrderTrackingScreen() {
         </View>
 
         {/* Buttons */}
-{/* Buttons */}
-<View style={{
-  paddingHorizontal: SPACING.lg,
-  paddingBottom: SPACING.xl,
-  gap: SPACING.md,
-}}>
-  {status === "served" ? (
-    <>
-      <Button
-        title="✅ Order Complete - View History"
-        size="large"
-        onPress={() => router.push({
-          pathname: "/(customer)/order-history",
-          params: { tableId, restaurantId },
-        })}
-      />
-      <Button
-        title="🍽 Order More Items"
-        variant="secondary"
-        size="large"
-        onPress={() => router.push({
-          pathname: "/(customer)/menu-categories",
-          params: { tableId, restaurantId },
-        })}
-      />
-    </>
-  ) : (
-    <>
-      <Button
-        title="🍽 Order More Items"
-        size="large"
-        onPress={() => router.push({
-          pathname: "/(customer)/menu-categories",
-          params: { tableId, restaurantId },
-        })}
-      />
-      <Button
-        title="🔄 Refresh Status"
-        variant="secondary"
-        size="large"
-        onPress={fetchOrderStatus}
-      />
-    </>
-  )}
-  <Button
-    title="Order History"
-    variant="secondary"
-    size="large"
-    onPress={() => router.push({
-      pathname: "/(customer)/order-history",
-      params: { tableId, restaurantId },
-    })}
-  />
-</View>
+        <View style={{
+          paddingHorizontal: SPACING.lg,
+          paddingBottom: SPACING.xl,
+          gap: SPACING.md,
+        }}>
+          <Button
+            title="Request Assistant"
+            variant="primary"
+            size="large"
+            loading={requestingAssistant}
+            icon={<Bell size={20} color={COLORS.white} />}
+            onPress={handleRequestAssistant}
+            style={{ backgroundColor: COLORS.warning }}
+          />
+
+          {status === "served" ? (
+            <>
+              <Button
+                title="Proceed to Payment"
+                size="large"
+                icon={<CheckCircle size={20} color={COLORS.white} />}
+                onPress={() => router.push({
+                  pathname: "/(customer)/payment-method",
+                  params: { orderId, tableId, restaurantId, total },
+                })}
+              />
+              <Button
+                title="Order More Items"
+                variant="secondary"
+                size="large"
+                icon={<UtensilsCrossed size={20} color={COLORS.text.primary} />}
+                onPress={() => router.push({
+                  pathname: "/(customer)/menu-categories",
+                  params: { tableId, restaurantId },
+                })}
+              />
+            </>
+          ) : (
+            <>
+              <Button
+                title="Order More Items"
+                size="large"
+                icon={<UtensilsCrossed size={20} color={COLORS.white} />}
+                onPress={() => router.push({
+                  pathname: "/(customer)/menu-categories",
+                  params: { tableId, restaurantId },
+                })}
+              />
+              <Button
+                title="Refresh Status"
+                variant="secondary"
+                size="large"
+                icon={<RefreshCw size={20} color={COLORS.text.primary} />}
+                onPress={fetchOrderStatus}
+              />
+            </>
+          )}
+          <Button
+            title="Order History"
+            variant="secondary"
+            size="large"
+            onPress={() => router.push({
+              pathname: "/(customer)/order-history",
+              params: { tableId, restaurantId },
+            })}
+          />
+        </View>
       </SafeAreaContainer>
     </>
   );

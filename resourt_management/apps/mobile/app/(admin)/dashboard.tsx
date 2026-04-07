@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
- 
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Header from '@components/layout/Header';
@@ -13,154 +12,186 @@ import { useAdminAuth } from '@contexts/AdminAuthContext';
 import { CERTIFICATIONS, SANITIZATION_LOGS } from '@services/mockData';
 import { COLORS } from '@constants/colors';
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
+import { 
+  ClipboardList, 
+  Package, 
+  ShieldCheck, 
+  BellRing, 
+  User,
+  Layers,
+  AlertTriangle,
+  TrendingDown,
+  CheckCircle2,
+  Sparkles,
+  LogOut,
+  ChevronRight
+} from 'lucide-react-native';
+import Badge from '@components/ui/Badge';
+import { INVENTORY_ITEMS } from '@services/mockData';
 
 const ADMIN_SECTIONS = [
-  { id: 'orders', label: 'Orders Management', icon: '📋', route: '/(admin)/orders-management' },
-  { id: 'inventory', label: 'Inventory', icon: '📦', route: '/(admin)/inventory' },
-  { id: 'hygiene', label: 'Hygiene & Compliance', icon: '✓', route: '/(admin)/hygiene-compliance' },
-  { id: 'expiry', label: 'Expiry Alerts', icon: '⏰', route: '/(admin)/expiry-alerts' },
-  { id: 'profile', label: 'Staff Profile', icon: '👤', route: '/(admin)/staff-profile' },
+  { id: 'orders', label: 'Orders', Icon: ClipboardList, color: COLORS.status.info, route: '/(admin)/orders-management' },
+  { id: 'inventory', label: 'Inventory', Icon: Package, color: COLORS.status.success, route: '/(admin)/inventory' },
+  { id: 'hygiene', label: 'Hygiene', Icon: ShieldCheck, color: COLORS.status.success, route: '/(admin)/hygiene-compliance' },
+  { id: 'expiry', label: 'Alerts', Icon: BellRing, color: COLORS.status.error, route: '/(admin)/expiry-alerts' },
+  { id: 'profile', label: 'Profile', Icon: User, color: COLORS.status.neutral, route: '/(admin)/staff-profile' },
 ];
 
 export default function AdminDashboardScreen() {
   const router = useRouter();
   const { admin, logout } = useAdminAuth();
 
+  // Mock stats - in a real app these would come from an API
+  const stats = [
+    { label: 'Total Items', value: INVENTORY_ITEMS.length, Icon: Layers, color: COLORS.status.success },
+    { label: 'Critical', value: INVENTORY_ITEMS.filter(i => i.status === 'expired').length, Icon: AlertTriangle, color: COLORS.status.error },
+    { label: 'Low Stock', value: 3, Icon: TrendingDown, color: COLORS.status.warning },
+  ];
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: '#f5f7f9',
     },
     content: {
       padding: SPACING.lg,
       flex: 1,
     },
-    welcomeCard: {
-      backgroundColor: COLORS.primary,
-      padding: SPACING.lg,
-      borderRadius: BORDER_RADIUS.lg,
+    welcomeHeader: {
       marginBottom: SPACING.xl,
-      color: COLORS.white,
     },
     welcomeText: {
-      fontSize: FONT_SIZES.lg,
+      fontSize: FONT_SIZES.xxl,
       fontWeight: FONT_WEIGHTS.bold,
-      color: COLORS.white,
-      marginBottom: SPACING.sm,
+      color: COLORS.text.primary,
     },
     adminName: {
       fontSize: FONT_SIZES.base,
-      color: 'rgba(255, 255, 255, 0.9)',
+      color: COLORS.text.secondary,
+      marginTop: 4,
     },
-    sectionLabel: {
+    summaryGrid: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: SPACING.xl,
+    },
+    summaryCard: {
+      backgroundColor: COLORS.white,
+      borderRadius: BORDER_RADIUS.lg,
+      padding: SPACING.md,
+      width: '31%',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 5,
+      elevation: 3,
+    },
+    summaryIcon: {
+      marginBottom: SPACING.xs,
+    },
+    summaryValue: {
       fontSize: FONT_SIZES.lg,
       fontWeight: FONT_WEIGHTS.bold,
       color: COLORS.text.primary,
+    },
+    summaryLabel: {
+      fontSize: 10,
+      color: COLORS.text.secondary,
+      textAlign: 'center',
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    sectionLabel: {
+      fontSize: FONT_SIZES.base,
+      fontWeight: '800',
+      color: COLORS.text.primary,
       marginBottom: SPACING.md,
-      marginTop: SPACING.lg,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
     },
     gridContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
-      marginBottom: SPACING.xl,
+      marginBottom: SPACING.lg,
     },
     gridItem: {
-      width: '48%',
+      width: '31%',
       marginBottom: SPACING.md,
     },
     sectionButton: {
       backgroundColor: COLORS.white,
       borderRadius: BORDER_RADIUS.lg,
-      borderWidth: 1,
-      borderColor: COLORS.border,
-      padding: SPACING.lg,
+      padding: SPACING.md,
       alignItems: 'center',
       justifyContent: 'center',
-      minHeight: 140,
-      shadowColor: COLORS.black,
+      aspectRatio: 1,
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      shadowOpacity: 0.05,
+      shadowRadius: 5,
+      elevation: 2,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.02)',
     },
     sectionIcon: {
-      fontSize: 40,
-      marginBottom: SPACING.md,
+      marginBottom: SPACING.sm,
     },
     sectionTitle: {
-      fontSize: FONT_SIZES.sm,
+      fontSize: 11,
       fontWeight: FONT_WEIGHTS.semibold,
       color: COLORS.text.primary,
       textAlign: 'center',
     },
-    certificationCard: {
-      backgroundColor: 'rgba(76, 175, 80, 0.1)',
-      borderLeftWidth: 4,
-      borderLeftColor: COLORS.success,
+    listCard: {
+      backgroundColor: COLORS.white,
+      borderRadius: BORDER_RADIUS.lg,
       padding: SPACING.md,
-      borderRadius: BORDER_RADIUS.md,
       marginBottom: SPACING.md,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 3,
+      elevation: 2,
     },
-    certTitle: {
-      fontSize: FONT_SIZES.sm,
-      fontWeight: FONT_WEIGHTS.bold,
-      color: COLORS.text.primary,
-    },
-    certDetails: {
-      fontSize: FONT_SIZES.xs,
-      color: COLORS.text.secondary,
-      marginTop: SPACING.xs,
-    },
-    sanitationLog: {
+    cardRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: SPACING.md,
-      borderBottomWidth: 1,
-      borderBottomColor: COLORS.border,
+      justifyContent: 'space-between',
     },
-    logIcon: {
-      fontSize: 20,
-      marginRight: SPACING.md,
-      width: 30,
-    },
-    logContent: {
+    cardContent: {
       flex: 1,
     },
-    logType: {
+    cardTitle: {
       fontSize: FONT_SIZES.sm,
-      fontWeight: FONT_WEIGHTS.semibold,
+      fontWeight: FONT_WEIGHTS.bold,
       color: COLORS.text.primary,
     },
-    logDetails: {
-      fontSize: FONT_SIZES.xs,
+    cardSubtitle: {
+      fontSize: 12,
       color: COLORS.text.secondary,
-      marginTop: SPACING.xs,
+      marginTop: 2,
     },
-    statusBadge: {
-      backgroundColor: COLORS.success,
-      color: COLORS.white,
-      paddingHorizontal: SPACING.sm,
-      paddingVertical: SPACING.xs,
-      borderRadius: BORDER_RADIUS.md,
-      fontSize: FONT_SIZES.xs,
-      fontWeight: FONT_WEIGHTS.bold,
-      overflow: 'hidden',
-    },
-    buttonContainer: {
+    logoutContainer: {
       padding: SPACING.lg,
       paddingBottom: SPACING.xl,
     },
     logoutButton: {
-      backgroundColor: COLORS.error,
+      flexDirection: 'row',
+      backgroundColor: 'rgba(231, 76, 60, 0.1)',
       paddingVertical: SPACING.md,
-      paddingHorizontal: SPACING.lg,
       borderRadius: BORDER_RADIUS.md,
       alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: 'rgba(231, 76, 60, 0.2)',
     },
     logoutButtonText: {
-      color: COLORS.white,
-      fontWeight: FONT_WEIGHTS.semibold,
+      color: COLORS.status.error,
+      fontWeight: FONT_WEIGHTS.bold,
       fontSize: FONT_SIZES.base,
+      marginLeft: SPACING.sm,
     },
   });
 
@@ -175,16 +206,27 @@ export default function AdminDashboardScreen() {
 
   return (
     <>
-      <Header title="DineSmart Admin" />
+      <Header title="Admin Dashboard" showBackButton={false} />
       <SafeAreaContainer style={styles.container} scrollable>
         <View style={styles.content}>
-          {/* Welcome Card */}
-          <View style={styles.welcomeCard}>
-            <Text style={styles.welcomeText}>Welcome back!</Text>
-            <Text style={styles.adminName}>{admin?.name}</Text>
+          {/* Welcome Header */}
+          <View style={styles.welcomeHeader}>
+            <Text style={styles.welcomeText}>Hello, {admin?.name || 'Admin'}</Text>
+            <Text style={styles.adminName}>Operations and management overview</Text>
           </View>
 
-          {/* Quick Actions */}
+          {/* Highlights Stats */}
+          <View style={styles.summaryGrid}>
+            {stats.map((stat, idx) => (
+              <View key={idx} style={styles.summaryCard}>
+                <stat.Icon size={18} color={stat.color} style={styles.summaryIcon} strokeWidth={2.5} />
+                <Text style={styles.summaryValue}>{stat.value}</Text>
+                <Text style={styles.summaryLabel}>{stat.label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Quick Access Grid */}
           <Text style={styles.sectionLabel}>Management</Text>
           <View style={styles.gridContainer}>
             {ADMIN_SECTIONS.map((section) => (
@@ -194,43 +236,63 @@ export default function AdminDashboardScreen() {
                   onPress={() => handleNavigate(section.route)}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.sectionIcon}>{section.icon}</Text>
+                  <section.Icon size={24} color={section.color} style={styles.sectionIcon} strokeWidth={2} />
                   <Text style={styles.sectionTitle}>{section.label}</Text>
                 </TouchableOpacity>
               </View>
             ))}
           </View>
 
-          {/* Certifications */}
-          <Text style={styles.sectionLabel}>Certifications</Text>
-          {CERTIFICATIONS.map((cert) => (
-            <View key={cert.id} style={styles.certificationCard}>
-              <Text style={styles.certTitle}>{cert.name}</Text>
-              <Text style={styles.certDetails}>{cert.level}</Text>
-              <Text style={styles.certDetails}>Valid until: {cert.expiryDate.toDateString()}</Text>
+          {/* Certifications Section */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.md }}>
+            <Text style={[styles.sectionLabel, { marginBottom: 0 }]}>Certifications</Text>
+            <TouchableOpacity onPress={() => handleNavigate('/(admin)/hygiene-compliance')}>
+              <Text style={{ color: COLORS.status.info, fontSize: 12, fontWeight: '700' }}>VIEW ALL</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {CERTIFICATIONS.slice(0, 1).map((cert) => (
+            <View key={cert.id} style={styles.listCard}>
+              <View style={styles.cardRow}>
+                <View style={[styles.cardContent, { flexDirection: 'row', alignItems: 'center' }]}>
+                  <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.status.success + '14', alignItems: 'center', justifyContent: 'center', marginRight: SPACING.md }}>
+                    <CheckCircle2 size={18} color={COLORS.status.success} />
+                  </View>
+                  <View>
+                    <Text style={styles.cardTitle}>{cert.name}</Text>
+                    <Text style={styles.cardSubtitle}>Valid until {cert.expiryDate.toLocaleDateString()}</Text>
+                  </View>
+                </View>
+                <Badge label="ACTIVE" variant="success" size="small" />
+              </View>
             </View>
           ))}
 
-          {/* Recent Sanitization */}
-          <Text style={styles.sectionLabel}>Recent Sanitization</Text>
-          {SANITIZATION_LOGS.slice(0, 3).map((log) => (
-            <View key={log.id} style={styles.sanitationLog}>
-              <Text style={styles.logIcon}>🧼</Text>
-              <View style={styles.logContent}>
-                <Text style={styles.logType}>{log.type}</Text>
-                <Text style={styles.logDetails}>
-                  {log.employee} • {log.date.toDateString()} at {log.time}
-                </Text>
+          {/* Recent Sanitization Section */}
+          <Text style={[styles.sectionLabel, { marginTop: SPACING.lg }]}>Recent Sanitization</Text>
+          {SANITIZATION_LOGS.slice(0, 2).map((log) => (
+            <View key={log.id} style={styles.listCard}>
+              <View style={styles.cardRow}>
+                <View style={[styles.cardContent, { flexDirection: 'row', alignItems: 'center' }]}>
+                   <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.status.info + '14', alignItems: 'center', justifyContent: 'center', marginRight: SPACING.md }}>
+                    <Sparkles size={18} color={COLORS.status.info} />
+                  </View>
+                  <View>
+                    <Text style={styles.cardTitle}>{log.type}</Text>
+                    <Text style={styles.cardSubtitle}>{log.employee} • {log.date.toLocaleDateString()}</Text>
+                  </View>
+                </View>
+                <Badge label={log.status} variant={log.status === 'verified' ? 'success' : 'warning'} size="small" />
               </View>
-              <Text style={styles.statusBadge}>{log.status.toUpperCase()}</Text>
             </View>
           ))}
         </View>
 
-        {/* Logout Button */}
-        <View style={styles.buttonContainer}>
+        {/* Improved Logout Button */}
+        <View style={styles.logoutContainer}>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
+            <LogOut size={18} color={COLORS.status.error} />
+            <Text style={styles.logoutButtonText}>LOGOUT SYSTEM</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaContainer>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Header from '@components/layout/Header';
@@ -13,6 +14,8 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
 import { useCart } from '@contexts/CartContext';
+import { useCustomerAuth } from '@contexts/CustomerAuthContext';
+import { api } from '@services/api';
 import { COLORS } from '@constants/colors';
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
@@ -21,7 +24,7 @@ export default function OrderSummaryScreen() {
   const params = useLocalSearchParams();
   const tableId = params.tableId as string;
 
-  const { items, getSubtotal, getTaxAmount, getTotal } = useCart();
+  const { items, getSubtotal, getTaxAmount, getTotal, clearCart } = useCart();
 
   const styles = StyleSheet.create({
     container: {
@@ -116,16 +119,51 @@ export default function OrderSummaryScreen() {
   const subtotal = getSubtotal();
   const taxAmount = getTaxAmount();
   const total = getTotal();
+  const { token } = useCustomerAuth();
+  const [loading, setLoading] = useState(false);
 
   const handleBackPress = () => {
     router.back();
   };
 
-  const handleProceedToPayment = () => {
-    router.push({
-      pathname: '/(customer)/payment-method',
-      params: { tableId },
-    });
+  const handlePlaceOrder = async () => {
+    if (!token) {
+        Alert.alert('Error', 'Please login first');
+        router.push('/(auth)/login');
+        return;
+    }
+
+    setLoading(true);
+    try {
+      const orderData = {
+        restaurantId: params.restaurantId as string || '35f2c4cc-3f75-4181-88e0-6733e4aba39e',
+        tableNumber: parseInt(tableId),
+        items: items.map((item) => ({
+          menuItemId: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        paymentMethod: 'pending', // Payment happens later
+      };
+
+      const data = await api.placeOrder(orderData, token);
+      if (data.success || data.order?.id) {
+        clearCart();
+        const orderId = data.order?.id || data.orderId;
+        router.replace({
+          pathname: '/(customer)/order-tracking',
+          params: { orderId, tableId, restaurantId: params.restaurantId },
+        });
+      } else {
+        Alert.alert('Error', data.error || 'Failed to place order');
+      }
+    } catch (err) {
+      console.error('Place order error:', err);
+      Alert.alert('Error', 'Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderOrderItem = ({ item }: { item: any }) => (
@@ -173,9 +211,10 @@ export default function OrderSummaryScreen() {
         {/* Action Buttons */}
         <View style={styles.buttonContainer}>
           <Button
-            title="Proceed to Payment"
+            title={loading ? "Placing Order..." : "Place Order"}
             size="large"
-            onPress={handleProceedToPayment}
+            onPress={handlePlaceOrder}
+            disabled={loading}
           />
           <Button
             title="Back to Cart"
@@ -183,6 +222,7 @@ export default function OrderSummaryScreen() {
             size="large"
             onPress={handleBackPress}
             style={styles.backButton}
+            disabled={loading}
           />
         </View>
       </SafeAreaContainer>

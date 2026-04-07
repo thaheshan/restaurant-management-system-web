@@ -11,6 +11,7 @@ import Header from '@components/layout/Header';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
+import { ClipboardList, UtensilsCrossed, ChevronRight } from 'lucide-react-native';
 import { useCustomerAuth } from '@contexts/CustomerAuthContext';
 import { api } from '@services/api';
 import { COLORS } from '@constants/colors';
@@ -92,7 +93,7 @@ export default function OrderHistoryScreen() {
       <SafeAreaContainer scrollable>
         {orders.length === 0 ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: SPACING.xl }}>
-            <Text style={{ fontSize: 48, marginBottom: SPACING.lg }}>📋</Text>
+            <ClipboardList size={64} color={COLORS.gray[300]} strokeWidth={1.5} style={{ marginBottom: SPACING.lg }} />
             <Text style={{ fontSize: FONT_SIZES.lg, color: COLORS.text.secondary, marginBottom: SPACING.lg }}>
               No orders yet
             </Text>
@@ -173,17 +174,22 @@ export default function OrderHistoryScreen() {
                     Rs. {isNaN(parseFloat(order.grand_total)) ? '0' : parseFloat(order.grand_total).toLocaleString()}
                   </Text>
                   {order.order_status !== 'served' && (
-                    <TouchableOpacity onPress={() => router.push({
-                      pathname: '/(customer)/order-tracking',
-                      params: { orderId: order.id, tableId, restaurantId },
-                    })}>
+                    <TouchableOpacity 
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                      onPress={() => router.push({
+                        pathname: '/(customer)/order-tracking',
+                        params: { orderId: order.id, tableId, restaurantId },
+                      })}
+                    >
                       <Text style={{
                         fontSize: FONT_SIZES.sm,
                         color: COLORS.primary,
                         fontWeight: FONT_WEIGHTS.semibold,
+                        marginRight: 2,
                       }}>
-                        Track Order →
+                        Track Order
                       </Text>
+                      <ChevronRight size={16} color={COLORS.primary} strokeWidth={2.5} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -194,7 +200,12 @@ export default function OrderHistoryScreen() {
 
         {/* Bottom Buttons */}
         <View style={{ padding: SPACING.lg, paddingBottom: SPACING.xl, gap: SPACING.md }}>
-          <Button title="🍽 Place New Order" size="large" onPress={handleNewOrder} />
+          <Button 
+            title="Place New Order" 
+            size="large" 
+            icon={<UtensilsCrossed size={20} color={COLORS.white} />}
+            onPress={handleNewOrder} 
+          />
           <Button
             title="Back"
             variant="secondary"

@@ -14,6 +14,14 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import TextField from '@components/ui/TextField';
 import Card from '@components/ui/Card';
+import { 
+  Banknote, 
+  CreditCard, 
+  Wallet, 
+  Ticket, 
+  ChevronRight,
+  ShieldCheck
+} from 'lucide-react-native';
 import { useCart } from '@contexts/CartContext';
 import { useCustomerAuth } from '@contexts/CustomerAuthContext';
 import { api } from '@services/api';
@@ -21,9 +29,9 @@ import { COLORS } from '@constants/colors';
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
 const PAYMENT_OPTIONS = [
-  { id: 'cash', name: 'Cash in Hand', description: 'Pay when your food arrives', icon: '💵' },
-  { id: 'debitCard', name: 'Debit Card', description: 'Fast and secure online payment', icon: '💳' },
-  { id: 'creditCard', name: 'Credit Card', description: 'Visa, Mastercard, AMEX', icon: '💰' },
+  { id: 'cash', name: 'Cash in Hand', description: 'Pay when your food arrives', Icon: Banknote },
+  { id: 'debitCard', name: 'Debit Card', description: 'Fast and secure online payment', Icon: CreditCard },
+  { id: 'creditCard', name: 'Credit Card', description: 'Visa, Mastercard, AMEX', Icon: Wallet },
 ];
 
 export default function PaymentMethodScreen() {
@@ -31,20 +39,19 @@ export default function PaymentMethodScreen() {
   const params = useLocalSearchParams();
   const tableId = params.tableId as string;
   const restaurantId = params.restaurantId as string;
+  const total = params.total as string || "0";
 
-  const { items, getTotal, clearCart } = useCart();
   const { token } = useCustomerAuth();
+  const orderId = params.orderId as string;
 
   const [selectedPayment, setSelectedPayment] = useState('debitCard');
   const [promoCode, setPromoCode] = useState('');
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const total = getTotal();
-
   const handleConfirmPayment = async () => {
-    if (!items.length) {
-      Alert.alert('Error', 'Your cart is empty');
+    if (!orderId) {
+      Alert.alert('Error', 'No order found to pay for');
       return;
     }
     if (!token) {
@@ -54,36 +61,22 @@ export default function PaymentMethodScreen() {
 
     setLoading(true);
     try {
-      const orderData = {
-        restaurantId,
-        tableNumber: parseInt(tableId),
-        items: items.map((item) => ({
-          menuItemId: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        paymentMethod: selectedPayment,
-        promoCode: promoCode || undefined,
-      };
+      console.log('Updating payment for order:', orderId, selectedPayment);
+      const data = await api.updatePayment(orderId, selectedPayment, token);
+      console.log('Payment update response:', data);
 
-      console.log('Placing order:', orderData);
-      const data = await api.placeOrder(orderData, token);
-      console.log('Order placed response:', data);
-
-      if (data.success || data.order?.id || data.orderId) {
-        clearCart();
-        const orderId = data.order?.id || data.orderId || 'new-order';
-        router.push({
+      if (data.success) {
+        Alert.alert('Payment Successful', 'Thank you for your payment!');
+        router.replace({
           pathname: '/(customer)/order-tracking',
           params: { orderId, tableId, restaurantId },
         });
       } else {
-        Alert.alert('Error', data.error || 'Failed to place order');
+        Alert.alert('Error', data.error || 'Failed to process payment');
       }
     } catch (err) {
-      console.error('Place order error:', err);
-      Alert.alert('Error', 'Failed to place order. Please try again.');
+      console.error('Payment update error:', err);
+      Alert.alert('Error', 'Failed to process payment. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -131,7 +124,7 @@ export default function PaymentMethodScreen() {
               onPress={() => setSelectedPayment(option.id)}
               activeOpacity={0.7}
             >
-              <Text style={{ fontSize: 24, marginRight: SPACING.md }}>{option.icon}</Text>
+              <option.Icon size={24} color={selectedPayment === option.id ? COLORS.primary : COLORS.gray[400]} style={{ marginRight: SPACING.md }} />
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: FONT_SIZES.base, fontWeight: FONT_WEIGHTS.semibold, color: COLORS.text.primary }}>
                   {option.name}
@@ -160,14 +153,15 @@ export default function PaymentMethodScreen() {
               flexDirection: 'row', alignItems: 'center',
               marginBottom: SPACING.lg, padding: SPACING.md,
               backgroundColor: COLORS.surface, borderRadius: BORDER_RADIUS.lg,
+              borderWidth: 1, borderColor: COLORS.border,
             }}
             onPress={() => setShowPromoModal(true)}
           >
-            <Text style={{ fontSize: 18, marginRight: SPACING.md }}>🎟️</Text>
-            <Text style={{ flex: 1, fontSize: FONT_SIZES.base, color: COLORS.text.primary }}>
-              {promoCode ? `Promo: ${promoCode}` : 'Apply Promo Code'}
+            <Ticket size={24} color={COLORS.primary} style={{ marginRight: SPACING.md }} />
+            <Text style={{ flex: 1, fontSize: FONT_SIZES.base, color: COLORS.text.primary, fontWeight: FONT_WEIGHTS.semibold }}>
+              {promoCode ? `Promo Applied: ${promoCode}` : 'Have a Promo Code?'}
             </Text>
-            <Text style={{ fontSize: 18, color: COLORS.text.secondary }}>›</Text>
+            <ChevronRight size={20} color={COLORS.text.secondary} />
           </TouchableOpacity>
         </View>
 

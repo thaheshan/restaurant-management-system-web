@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ViewStyle,
-} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ViewStyle } from 'react-native';
+import { Trash2 } from 'lucide-react-native';
 import { CartItem } from '@/types';
 import QuantitySelector from '@components/ui/QuantitySelector';
 import { COLORS } from '@constants/colors';
@@ -86,7 +80,7 @@ const CartItemRow: React.FC<CartItemRowProps> = ({ item, onUpdateQuantity, onRem
           style={styles.quantitySelector}
         />
         <TouchableOpacity style={styles.removeButton} onPress={() => onRemove(item.id)}>
-          <Text style={styles.removeText}>Remove</Text>
+          <Trash2 size={18} color={COLORS.error} />
         </TouchableOpacity>
       </View>
     </View>

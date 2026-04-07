@@ -1,3 +1,4 @@
+@use "sass:color";
 @import '../../../../styles/variable.scss';
 
 .hygiene {
@@ -61,7 +62,7 @@
   svg { width: 16px; height: 16px; }
 
   &:hover {
-    background: darken($color-primary, 5%);
+    background: color.adjust($color-primary, $lightness: -5%);
     transform: translateY(-1px);
   }
 }

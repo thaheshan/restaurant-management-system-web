@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/app/src/store/hooks';
 import { fetchInventory, fetchInventoryStats, addIngredient, updateIngredient, updateUsage, deleteIngredient, clearInventoryMessages } from '@/app/src/store/slices/inventorySlice';
 import { FiPackage, FiCheckCircle, FiAlertTriangle, FiAlertOctagon, FiRefreshCw, FiPlus, FiSearch, FiEdit2, FiTrash2, FiTrendingUp, FiTrendingDown, FiX } from 'react-icons/fi';
+import { GiMeat, GiFishCooked, GiCarrot, GiChiliPepper, GiCorn, GiMilkCarton } from 'react-icons/gi';
 
 import './InventoryManagement.scss';
 
@@ -89,15 +90,20 @@ const InventoryManagement = () => {
 
   const filtered = items.filter((i: any) => {
     const matchSearch = i.name?.toLowerCase().includes(search.toLowerCase());
-    const sl = (i.stock_level || i.status || 'normal').toLowerCase();
-    const matchStatus = filterStatus === 'all' || (filterStatus === 'ok' && ['ok','normal','fresh'].includes(sl)) || (filterStatus === 'critical' && ['critical','out_of_stock'].includes(sl));
+    const qty = parseFloat(i.quantity ?? 0);
+    let sl = 'ok';
+    if (qty <= 0) sl = 'critical';
+    else if (qty < 2) sl = 'low';
+    
+    const matchStatus = filterStatus === 'all' || filterStatus === sl;
     return matchSearch && matchStatus;
   });
 
   const counts = {
     total: items.length,
-    inStock: items.filter((i: any) => ['ok','normal','fresh'].includes((i.stock_level || i.status || '').toLowerCase())).length,
-    critical: items.filter((i: any) => ['critical','out_of_stock'].includes((i.stock_level || i.status || '').toLowerCase())).length,
+    inStock: items.filter((i: any) => parseFloat(i.quantity ?? 0) >= 2).length,
+    lowStock: items.filter((i: any) => { const qty = parseFloat(i.quantity ?? 0); return qty > 0 && qty < 2; }).length,
+    critical: items.filter((i: any) => parseFloat(i.quantity ?? 0) <= 0).length,
   };
 
   const modalStyle: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 };
@@ -143,7 +149,7 @@ const InventoryManagement = () => {
         {[
           { label: 'Total Items', value: counts.total, color: P, bg: 'rgba(45,90,61,0.08)', Icon: FiPackage },
           { label: 'In Stock', value: counts.inStock, color: '#27ae60', bg: 'rgba(39,174,96,0.08)', Icon: FiCheckCircle },
-          { label: 'Low Stock', value: 0, color: '#f39c12', bg: 'rgba(243,156,18,0.08)', Icon: FiAlertTriangle },
+          { label: 'Low Stock', value: counts.lowStock, color: '#f39c12', bg: 'rgba(243,156,18,0.08)', Icon: FiAlertTriangle },
           { label: 'Critical', value: counts.critical, color: '#e74c3c', bg: 'rgba(231,76,60,0.08)', Icon: FiAlertOctagon },
         ].map(c => (
           <div key={c.label} style={{ background: 'white', borderRadius: 12, padding: '18px 16px', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -167,7 +173,7 @@ const InventoryManagement = () => {
               style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.88rem', color: '#1a1a1a', width: '100%' }} />
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
-            {[{ key: 'all', label: 'All' }, { key: 'ok', label: 'In Stock' }, { key: 'critical', label: 'Critical' }].map(f => (
+            {[{ key: 'all', label: 'All' }, { key: 'ok', label: 'In Stock' }, { key: 'low', label: 'Low Stock' }, { key: 'critical', label: 'Critical' }].map(f => (
               <button key={f.key} onClick={() => setFilterStatus(f.key)} style={{
                 padding: '6px 14px', borderRadius: 20, fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
                 border: filterStatus === f.key ? `1.5px solid ${P}` : '1px solid #e5e7eb',
@@ -191,13 +197,16 @@ const InventoryManagement = () => {
               </thead>
               <tbody>
                 {filtered.map((item: any) => {
-                  const sl = ['critical','out_of_stock'].includes((item.stock_level || item.status || '').toLowerCase()) ? 'critical' : 'ok';
-                  const category = (item.category || 'OTHER').toUpperCase();
                   const qty = parseFloat(item.quantity ?? 0);
+                  let sl = 'ok';
+                  if (qty <= 0) sl = 'critical';
+                  else if (qty < 2) sl = 'low';
+                  
+                  const category = (item.category || 'OTHER').toUpperCase();
                   const threshold = parseFloat(item.reorder_level || item.min_threshold || 0);
                   const maxBar = Math.max(qty, threshold * 2, 10);
                   const expiry = item.expiry_date ? item.expiry_date.split('T')[0] : '-';
-                  const barColor = sl === 'ok' ? '#27ae60' : '#e74c3c';
+                  const barColor = sl === 'ok' ? '#27ae60' : sl === 'low' ? '#f39c12' : '#e74c3c';
                   return (
                     <tr key={item.id} style={{ borderBottom: '1px solid #f5f5f5' }}>
                       <td style={{ padding: '12px 16px' }}>
@@ -222,9 +231,14 @@ const InventoryManagement = () => {
                       <td style={{ padding: '12px 16px', color: '#666', fontSize: '0.85rem' }}>{threshold} {item.unit || 'kg'}</td>
                       <td style={{ padding: '12px 16px', color: '#666', fontSize: '0.83rem' }}>{expiry}</td>
                       <td style={{ padding: '12px 16px' }}>
-                        <span style={{ padding: '4px 12px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700, background: sl === 'ok' ? 'rgba(39,174,96,0.1)' : 'rgba(231,76,60,0.1)', color: sl === 'ok' ? '#27ae60' : '#e74c3c', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                          {sl === 'ok' ? <FiCheckCircle size={11} /> : <FiAlertOctagon size={11} />}
-                          {sl === 'ok' ? 'In Stock' : 'Critical'}
+                        <span style={{ 
+                          padding: '4px 12px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700, 
+                          background: sl === 'ok' ? 'rgba(39,174,96,0.1)' : sl === 'low' ? 'rgba(243,156,18,0.1)' : 'rgba(231,76,60,0.1)', 
+                          color: sl === 'ok' ? '#27ae60' : sl === 'low' ? '#f39c12' : '#e74c3c', 
+                          display: 'inline-flex', alignItems: 'center', gap: 4 
+                        }}>
+                          {sl === 'ok' ? <FiCheckCircle size={11} /> : sl === 'low' ? <FiAlertTriangle size={11} /> : <FiAlertOctagon size={11} />}
+                          {sl === 'ok' ? 'In Stock' : sl === 'low' ? 'Low Stock' : 'Critical'}
                         </span>
                       </td>
                       <td style={{ padding: '12px 16px' }}>

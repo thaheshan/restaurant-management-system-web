@@ -18,13 +18,13 @@ import { SPACING, FONT_SIZES, FONT_WEIGHTS } from "@constants/spacing";
 
 export default function SignupScreen() {
   const router = useRouter();
-  const { signup, verifyOtp, otpSent } = useCustomerAuth();
+  const { signup } = useCustomerAuth();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
+    password: "",
   });
-  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
@@ -32,36 +32,29 @@ export default function SignupScreen() {
       Alert.alert("Error", "Please enter your name");
       return;
     }
+    if (!formData.email.trim() || !formData.email.includes("@")) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
     if (!formData.phone.trim()) {
       Alert.alert("Error", "Please enter your phone number");
+      return;
+    }
+    if (!formData.password.trim() || formData.password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters");
       return;
     }
     setLoading(true);
     try {
       await signup(
-        formData.phone.trim(),
+        formData.email.trim(),
         formData.name.trim(),
-        formData.email.trim() || undefined
+        formData.phone.trim(),
+        formData.password
       );
-      Alert.alert("OTP Sent", "Check your backend console for the OTP code");
-    } catch (error) {
-      Alert.alert("Signup Failed", error instanceof Error ? error.message : "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!otp.trim()) {
-      Alert.alert("Error", "Please enter the OTP");
-      return;
-    }
-    setLoading(true);
-    try {
-      await verifyOtp(formData.phone.trim(), otp.trim());
       router.replace("/(customer)/home");
     } catch (error) {
-      Alert.alert("Invalid OTP", error instanceof Error ? error.message : "OTP verification failed");
+      Alert.alert("Signup Failed", error instanceof Error ? error.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -99,135 +92,99 @@ export default function SignupScreen() {
               color: COLORS.text.primary,
               marginBottom: SPACING.sm,
             }}>
-              {otpSent ? "Verify OTP" : "Create Account"}
+              Create Account
             </Text>
             <Text style={{
               fontSize: FONT_SIZES.sm,
               color: COLORS.text.secondary,
               lineHeight: 20,
             }}>
-              {otpSent
-                ? "Enter the OTP from your backend console"
-                : "Sign up to start ordering delicious food"}
+              Sign up to start ordering delicious food
             </Text>
           </View>
 
-          {/* Form - hidden after OTP sent */}
-          {!otpSent && (
-            <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
-              <View style={{ marginBottom: SPACING.md }}>
-                <Text style={{
-                  fontSize: FONT_SIZES.sm,
-                  fontWeight: FONT_WEIGHTS.semibold,
-                  color: COLORS.text.primary,
-                  marginBottom: SPACING.sm,
-                }}>
-                  Full Name
-                </Text>
-                <TextField
-                  placeholder="Enter your name"
-                  value={formData.name}
-                  onChangeText={(text) => setFormData({ ...formData, name: text })}
-                  editable={!loading}
-                />
-              </View>
-
-              <View style={{ marginBottom: SPACING.md }}>
-                <Text style={{
-                  fontSize: FONT_SIZES.sm,
-                  fontWeight: FONT_WEIGHTS.semibold,
-                  color: COLORS.text.primary,
-                  marginBottom: SPACING.sm,
-                }}>
-                  Phone Number
-                </Text>
-                <TextField
-                  placeholder="Enter phone number"
-                  keyboardType="phone-pad"
-                  value={formData.phone}
-                  onChangeText={(text) => setFormData({ ...formData, phone: text })}
-                  editable={!loading}
-                />
-              </View>
-
-              <View style={{ marginBottom: SPACING.lg }}>
-                <Text style={{
-                  fontSize: FONT_SIZES.sm,
-                  fontWeight: FONT_WEIGHTS.semibold,
-                  color: COLORS.text.primary,
-                  marginBottom: SPACING.sm,
-                }}>
-                  Email (Optional)
-                </Text>
-                <TextField
-                  placeholder="Enter your email"
-                  keyboardType="email-address"
-                  value={formData.email}
-                  onChangeText={(text) => setFormData({ ...formData, email: text })}
-                  editable={!loading}
-                />
-              </View>
-            </View>
-          )}
-
-          {/* OTP Input */}
-          {otpSent && (
-            <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
+          {/* Form */}
+          <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
+            <View style={{ marginBottom: SPACING.md }}>
               <Text style={{
                 fontSize: FONT_SIZES.sm,
                 fontWeight: FONT_WEIGHTS.semibold,
                 color: COLORS.text.primary,
                 marginBottom: SPACING.sm,
               }}>
-                OTP Code
+                Full Name
               </Text>
               <TextField
-                placeholder="Enter OTP from backend console"
-                keyboardType="number-pad"
-                value={otp}
-                onChangeText={setOtp}
+                placeholder="Enter your name"
+                value={formData.name}
+                onChangeText={(text) => setFormData({ ...formData, name: text })}
                 editable={!loading}
-                autoFocus
               />
-              <Text style={{
-                fontSize: FONT_SIZES.xs,
-                color: COLORS.text.secondary,
-                marginTop: SPACING.xs,
-              }}>
-                Check your backend terminal for the OTP
-              </Text>
             </View>
-          )}
+
+            <View style={{ marginBottom: SPACING.md }}>
+              <Text style={{
+                fontSize: FONT_SIZES.sm,
+                fontWeight: FONT_WEIGHTS.semibold,
+                color: COLORS.text.primary,
+                marginBottom: SPACING.sm,
+              }}>
+                Email Address
+              </Text>
+              <TextField
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={formData.email}
+                onChangeText={(text) => setFormData({ ...formData, email: text })}
+                editable={!loading}
+              />
+            </View>
+
+            <View style={{ marginBottom: SPACING.md }}>
+              <Text style={{
+                fontSize: FONT_SIZES.sm,
+                fontWeight: FONT_WEIGHTS.semibold,
+                color: COLORS.text.primary,
+                marginBottom: SPACING.sm,
+              }}>
+                Phone Number
+              </Text>
+              <TextField
+                placeholder="Enter phone number"
+                keyboardType="phone-pad"
+                value={formData.phone}
+                onChangeText={(text) => setFormData({ ...formData, phone: text })}
+                editable={!loading}
+              />
+            </View>
+
+            <View style={{ marginBottom: SPACING.lg }}>
+              <Text style={{
+                fontSize: FONT_SIZES.sm,
+                fontWeight: FONT_WEIGHTS.semibold,
+                color: COLORS.text.primary,
+                marginBottom: SPACING.sm,
+              }}>
+                Password
+              </Text>
+              <TextField
+                placeholder="Create a password"
+                secureTextEntry
+                value={formData.password}
+                onChangeText={(text) => setFormData({ ...formData, password: text })}
+                editable={!loading}
+              />
+            </View>
+          </View>
 
           {/* Button */}
           <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
-            {!otpSent ? (
-              <Button
-                title={loading ? "Creating Account..." : "Sign Up"}
-                onPress={handleSignup}
-                disabled={loading}
-              />
-            ) : (
-              <>
-                <Button
-                  title={loading ? "Verifying..." : "Verify OTP"}
-                  onPress={handleVerifyOtp}
-                  disabled={loading}
-                />
-                <TouchableOpacity
-                  onPress={() => handleSignup()}
-                  style={{ marginTop: SPACING.md, alignItems: "center" }}
-                >
-                  <Text style={{
-                    fontSize: FONT_SIZES.sm,
-                    color: COLORS.primary,
-                    fontWeight: FONT_WEIGHTS.semibold,
-                  }}>
-                    Resend OTP
-                  </Text>
-                </TouchableOpacity>
-              </>
-            )}
+            <Button
+              title={loading ? "Creating Account..." : "Sign Up"}
+              onPress={handleSignup}
+              disabled={loading}
+            />
           </View>
 
           {/* Login Link */}
@@ -255,3 +212,4 @@ export default function SignupScreen() {
     </SafeAreaContainer>
   );
 }
+

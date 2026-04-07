@@ -13,6 +13,7 @@ import SafeAreaContainer from "@components/layout/SafeAreaContainer";
 import Header from "@components/layout/Header";
 import QuantitySelector from "@components/ui/QuantitySelector";
 import Button from "@components/ui/Button";
+import { ShoppingBag, ShoppingCart, Info, X, PlusCircle } from 'lucide-react-native';
 import { api } from "@services/api";
 import { useCart } from "@contexts/CartContext";
 import { COLORS } from "@constants/colors";
@@ -70,6 +71,7 @@ export default function MenuItemsScreen() {
       price: parseFloat(selectedItem.price),
       quantity,
       image: selectedItem.image_url || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400",
+      category: categoryName || "Uncategorized",
     });
     Alert.alert("Added!", `${selectedItem.name} x${quantity} added to cart`);
     setModalVisible(false);
@@ -100,8 +102,8 @@ export default function MenuItemsScreen() {
         showBackButton
         onBackPress={() => router.back()}
         rightIcon={
-          <TouchableOpacity onPress={handleViewCart}>
-            <Text style={{ fontSize: 20, color: COLORS.white }}>🛒</Text>
+          <TouchableOpacity onPress={handleViewCart} style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center' }}>
+            <ShoppingCart size={24} color={COLORS.white} />
           </TouchableOpacity>
         }
       />
@@ -128,27 +130,35 @@ export default function MenuItemsScreen() {
               {items.map((item) => (
                 <TouchableOpacity
                   key={item.id}
+                  onPress={() => item.is_available !== false && handleItemPress(item)}
+                  activeOpacity={item.is_available !== false ? 0.9 : 1}
                   style={{
                     backgroundColor: COLORS.white,
                     borderRadius: BORDER_RADIUS.lg,
                     padding: SPACING.lg,
+                    opacity: item.is_available !== false ? 1 : 0.6,
                     shadowColor: COLORS.black,
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.06,
                     shadowRadius: 4,
                     elevation: 2,
                   }}
-                  onPress={() => handleItemPress(item)}
-                  activeOpacity={0.9}
                 >
-                  <Text style={{
-                    fontSize: FONT_SIZES.lg,
-                    fontWeight: FONT_WEIGHTS.bold,
-                    color: COLORS.text.primary,
-                    marginBottom: SPACING.xs,
-                  }}>
-                    {item.name}
-                  </Text>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xs }}>
+                    <Text style={{
+                      fontSize: FONT_SIZES.lg,
+                      fontWeight: FONT_WEIGHTS.bold,
+                      color: COLORS.text.primary,
+                      flex: 1,
+                    }}>
+                      {item.name}
+                    </Text>
+                    {item.is_available === false && (
+                      <View style={{ backgroundColor: COLORS.gray[200], paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+                        <Text style={{ fontSize: 10, fontWeight: '700', color: COLORS.text.secondary }}>SOLD OUT</Text>
+                      </View>
+                    )}
+                  </View>
                   <Text style={{
                     fontSize: FONT_SIZES.sm,
                     color: COLORS.text.secondary,
@@ -169,21 +179,23 @@ export default function MenuItemsScreen() {
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
-                      backgroundColor: COLORS.primary,
+                      backgroundColor: item.is_available !== false ? COLORS.primary : COLORS.gray[300],
                       paddingVertical: SPACING.sm,
                       paddingHorizontal: SPACING.lg,
                       borderRadius: BORDER_RADIUS.md,
                       alignSelf: "flex-start",
                       marginBottom: SPACING.md,
                     }}
-                    onPress={() => handleItemPress(item)}
+                    onPress={() => item.is_available !== false && handleItemPress(item)}
+                    disabled={item.is_available === false}
                   >
+                    <PlusCircle size={16} color={COLORS.white} style={{ marginRight: SPACING.xs }} />
                     <Text style={{
                       color: COLORS.white,
                       fontSize: FONT_SIZES.sm,
                       fontWeight: FONT_WEIGHTS.semibold,
                     }}>
-                      🛒 Add to Cart
+                      {item.is_available !== false ? "Add to Cart" : "Unavailable"}
                     </Text>
                   </TouchableOpacity>
                   <Image
@@ -229,15 +241,16 @@ export default function MenuItemsScreen() {
                 position: "absolute",
                 right: SPACING.lg,
                 top: SPACING.lg,
-                width: 32, height: 32,
-                borderRadius: 16,
+                width: 36, height: 36,
+                borderRadius: 18,
                 backgroundColor: COLORS.gray[100],
                 justifyContent: "center",
                 alignItems: "center",
+                zIndex: 10,
               }}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={{ fontSize: FONT_SIZES.lg }}>✕</Text>
+              <X size={20} color={COLORS.text.primary} />
             </TouchableOpacity>
 
             {selectedItem && (
@@ -259,13 +272,16 @@ export default function MenuItemsScreen() {
                   {selectedItem.description}
                 </Text>
                 {selectedItem.ingredients && (
-                  <Text style={{
-                    fontSize: FONT_SIZES.sm,
-                    color: COLORS.text.secondary,
-                    marginBottom: SPACING.md,
-                  }}>
-                    🧂 {selectedItem.ingredients}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: SPACING.md }}>
+                    <Info size={16} color={COLORS.text.secondary} style={{ marginTop: 2, marginRight: SPACING.xs }} />
+                    <Text style={{
+                      fontSize: FONT_SIZES.sm,
+                      color: COLORS.text.secondary,
+                      flex: 1,
+                    }}>
+                      {selectedItem.ingredients}
+                    </Text>
+                  </View>
                 )}
                 <Text style={{
                   fontSize: FONT_SIZES.sm,
@@ -294,7 +310,13 @@ export default function MenuItemsScreen() {
                   }}>
                     Rs. {(parseFloat(selectedItem.price) * quantity).toLocaleString()}
                   </Text>
-                  <Button title="Add to Cart" onPress={handleAddToCart} size="large" />
+                  <Button 
+                    title={selectedItem.is_available !== false ? "Add to Cart" : "Currently Unavailable"} 
+                    onPress={handleAddToCart} 
+                    disabled={selectedItem.is_available === false}
+                    size="large" 
+                    style={{ backgroundColor: selectedItem.is_available !== false ? COLORS.primary : COLORS.gray[400] }}
+                  />
                 </View>
               </>
             )}
