@@ -1,18 +1,17 @@
 import type { NextConfig } from 'next'
+import path from 'path'
 
 const nextConfig: NextConfig = {
   typescript: {
-    // Merge from next.config.mjs
     ignoreBuildErrors: true,
   },
   images: {
-    // Merge from next.config.mjs
     unoptimized: true,
   },
-  // Explicitly set the project root for Turbopack to prevent incorrect inference
-  // Using process.cwd() to ensure an absolute path to the current project
+  // This explicitly forces the project root to be this folder,
+  // stopping Next.js from being confused by the files in your parent folder.
   turbopack: {
-    root: process.cwd(),
+    root: path.resolve('.'),
   },
 }
 
