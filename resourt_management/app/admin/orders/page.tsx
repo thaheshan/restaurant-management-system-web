@@ -56,7 +56,10 @@ export default function OrdersPage() {
       const res = await fetch(`http://localhost:8000/api/orders/restaurant/${restaurantId}/orders`,
         { headers: { Authorization: `Bearer ${token}`, 'x-user-role': 'admin', 'x-restaurant-id': restaurantId } })
       const data = await res.json()
-      if (data.success) { setOrders(data.orders || []); setError('') }
+      if (data.success) {
+        setOrders(data.orders || []);
+        setError('');
+      }
       else setError(data.error || 'Failed to fetch orders')
     } catch { setError('Failed to fetch orders') }
     finally { setLoading(false) }

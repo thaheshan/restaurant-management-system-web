@@ -3,6 +3,8 @@ const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
+config.resolver.unstable_enablePackageExports = true;
+
 config.resolver.extraNodeModules = {
   '@': path.resolve(__dirname, 'src'),
   '@components': path.resolve(__dirname, 'src/components'),

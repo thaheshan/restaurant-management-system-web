@@ -13,10 +13,10 @@ interface CustomerAuthContextType {
   user: CustomerUser | null;
   token: string | null;
   isLoggedIn: boolean;
-  signup: (phone: string, name: string, email?: string) => Promise<void>;
-  login: (phone: string) => Promise<void>;
-  verifyOtp: (phone: string, otp: string) => Promise<void>;
+  signup: (email: string, name: string, phone: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  verifyOtp: (phone: string, otp: string) => Promise<void>;
   otpSent: boolean;
 }
 
@@ -26,19 +26,18 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [user, setUser] = useState<CustomerUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
 
-  const signup = useCallback(async (phone: string, name: string, email?: string) => {
+  const signup = useCallback(async (email: string, name: string, phone: string, password: string) => {
     try {
-      console.log("Signing up with:", API_BASE, phone);
+      console.log("Signing up with:", email);
       const res = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
+          email,
           mobile: phone,
-          email: email || "",
-          password: phone,
+          password,
           role: "customer",
         }),
       });
@@ -48,9 +47,9 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setToken(data.token);
         setUser({
           id: data.user?.id || "user-1",
-          phone,
+          phone: data.user?.mobileNumber || phone,
           name: data.user?.name || name,
-          email: data.user?.email || email || "",
+          email: data.user?.email || email,
         });
         setIsLoggedIn(true);
       } else {
@@ -62,53 +61,31 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   }, []);
 
-  const login = useCallback(async (phone: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     try {
-      console.log("Sending OTP to:", phone);
-      const res = await fetch(`${API_BASE}/auth/send-otp`, {
+      console.log("Logging in with:", email);
+      const res = await fetch(`${API_BASE}/auth/customer-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobileNumber: phone }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      console.log("Send OTP response:", data);
-      if (data.success || data.otp) {
-        setOtpSent(true);
-        console.log("OTP:", data.otp);
-      } else {
-        throw new Error(data.error || "Failed to send OTP");
-      }
-    } catch (err: any) {
-      console.error("Login error:", err);
-      throw new Error(err.message || "Failed to send OTP");
-    }
-  }, []);
-
-  const verifyOtp = useCallback(async (phone: string, otp: string) => {
-    try {
-      const res = await fetch(`${API_BASE}/auth/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobileNumber: phone, otp }),
-      });
-      const data = await res.json();
-      console.log("Verify OTP response:", data);
+      console.log("Login response:", data);
       if (data.success && data.token) {
         setToken(data.token);
         setUser({
-          id: data.user?.id || "user-1",
-          phone,
+          id: data.user?.id,
+          phone: data.user?.mobileNumber || "",
           name: data.user?.name || "Customer",
-          email: data.user?.email || "",
+          email: data.user?.email || email,
         });
         setIsLoggedIn(true);
-        setOtpSent(false);
       } else {
-        throw new Error(data.error || "Invalid OTP");
+        throw new Error(data.error || "Login failed");
       }
     } catch (err: any) {
-      console.error("Verify OTP error:", err);
-      throw new Error(err.message || "OTP verification failed");
+      console.error("Login error:", err);
+      throw new Error(err.message || "Login failed");
     }
   }, []);
 
@@ -116,14 +93,15 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setUser(null);
     setToken(null);
     setIsLoggedIn(false);
-    setOtpSent(false);
   }, []);
 
   return (
     <CustomerAuthContext.Provider value={{
       user, token, isLoggedIn,
-      signup, login, verifyOtp,
-      logout, otpSent,
+      signup, login,
+      logout,
+      verifyOtp: async () => {}, // No longer used
+      otpSent: false, // No longer used
     }}>
       {children}
     </CustomerAuthContext.Provider>

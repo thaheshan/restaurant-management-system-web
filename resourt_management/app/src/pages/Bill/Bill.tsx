@@ -95,7 +95,7 @@ const Bill: React.FC = () => {
             onClick={handleProceed}
             id="bill-proceed-btn"
           >
-            Proceed to Payment
+            Place Order
           </button>
         </div>
       </div>

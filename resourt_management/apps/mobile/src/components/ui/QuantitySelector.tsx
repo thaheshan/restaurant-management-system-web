@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
+import { Minus, Plus } from 'lucide-react-native';
 import { COLORS } from '@constants/colors';
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
@@ -70,7 +71,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         disabled={quantity <= minQuantity}
         activeOpacity={0.7}
       >
-        <Text style={styles.buttonText}>−</Text>
+        <Minus size={18} color={quantity <= minQuantity ? COLORS.border : COLORS.primary} strokeWidth={3} />
       </TouchableOpacity>
       <Text style={styles.quantityText}>{quantity}</Text>
       <TouchableOpacity
@@ -79,7 +80,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         disabled={quantity >= maxQuantity}
         activeOpacity={0.7}
       >
-        <Text style={styles.buttonText}>+</Text>
+        <Plus size={18} color={quantity >= maxQuantity ? COLORS.border : COLORS.primary} strokeWidth={3} />
       </TouchableOpacity>
     </View>
   );

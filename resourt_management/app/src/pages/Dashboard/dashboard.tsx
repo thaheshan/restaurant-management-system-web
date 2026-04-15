@@ -33,20 +33,20 @@ const getRestaurantId = () => {
   return '';
 };
 
-const getStatusColor = (stockLevel: string) => {
-  const s = (stockLevel || '').toLowerCase();
-  if (['ok', 'normal', 'fresh', 'in_stock'].includes(s)) return '#2d5a3d';
-  if (['low', 'low_stock'].includes(s)) return '#e67e22';
+const getStatusColor = (status: string) => {
+  const s = status.toLowerCase();
+  if (s === 'ok') return '#2d5a3d';
+  if (s === 'low') return '#e67e22';
   if (s === 'critical') return '#e74c3c';
-  return '#e67e22';
+  return '#718096';
 };
 
-const getStatusLabel = (stockLevel: string) => {
-  const s = (stockLevel || '').toLowerCase();
-  if (['ok', 'normal', 'fresh', 'in_stock'].includes(s)) return 'In Stock';
-  if (['low', 'low_stock'].includes(s)) return 'Low Stock';
+const getStatusLabel = (status: string) => {
+  const s = status.toLowerCase();
+  if (s === 'ok') return 'In Stock';
+  if (s === 'low') return 'Low Stock';
   if (s === 'critical') return 'Critical';
-  return 'Reorder';
+  return 'Unknown';
 };
 
 const Dashboard = () => {
@@ -107,12 +107,19 @@ const Dashboard = () => {
     },
   ];
 
-  const inventorySnapshot = inventoryItems.slice(0, 4).map((item: any) => ({
-    name: item.name,
-    stock: `${parseFloat(item.quantity ?? item.stock ?? 0).toFixed(2)} ${item.unit || 'kg'}`,
-    status: getStatusLabel(item.stock_level || item.status || 'ok'),
-    color: getStatusColor(item.stock_level || item.status || 'ok'),
-  }));
+  const inventorySnapshot = inventoryItems.slice(0, 4).map((item: any) => {
+    const qty = parseFloat(item.quantity ?? item.stock ?? 0);
+    let status = 'ok';
+    if (qty <= 0) status = 'critical';
+    else if (qty < 2) status = 'low';
+    
+    return {
+      name: item.name,
+      stock: `${qty.toFixed(2)} ${item.unit || 'kg'}`,
+      status: getStatusLabel(status),
+      color: getStatusColor(status),
+    };
+  });
 
   const latestCert = certifications?.[0];
   const latestLog = sanitizationLogs?.[0];

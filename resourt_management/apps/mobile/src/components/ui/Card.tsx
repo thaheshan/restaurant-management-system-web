@@ -19,11 +19,11 @@ const Card: React.FC<CardProps> = ({ children, style, shadow = true, padding = S
       borderColor: COLORS.border,
       padding,
       ...(shadow && {
-        shadowColor: COLORS.black,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.1)',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 10,
+        elevation: 6,
       }),
     },
   });

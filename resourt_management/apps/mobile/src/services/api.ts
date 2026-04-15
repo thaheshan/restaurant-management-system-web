@@ -51,4 +51,24 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` },
     });
   },
+  requestAssistant: async (orderId: string, token: string) => {
+    return tunnelFetch(`${BASE_URL}/orders/request-assistant`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ orderId }),
+    });
+  },
+  updatePayment: async (orderId: string, paymentMethod: string, token: string) => {
+    return tunnelFetch(`${BASE_URL}/orders/${orderId}/payment`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ paymentMethod }),
+    });
+  },
 };

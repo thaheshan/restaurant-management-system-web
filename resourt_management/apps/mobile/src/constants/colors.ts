@@ -28,6 +28,20 @@ export const COLORS = {
   },
   fresh: '#4CAF50',
   expired: '#F44336',
+  // Web Dashboard Aligned Colors
+  webGreen: '#2d5a3d',
+  webRed: '#e74c3c',
+  webBlue: '#3498db',
+  webOrange: '#e67e22',
+  webDark: '#1a1a1a',
+  webLight: '#f8f8f8',
+  status: {
+    success: '#2d5a3d',
+    error: '#e74c3c',
+    warning: '#e67e22',
+    info: '#3498db',
+    neutral: '#718096',
+  }
 };
 
 export const PAYMENT_COLORS = {

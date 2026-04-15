@@ -12,6 +12,7 @@ import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import CartItemRow from '@components/cards/CartItemRow';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
+import { ShoppingBag } from 'lucide-react-native';
 import { useCart } from '@contexts/CartContext';
 import { COLORS } from '@constants/colors';
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
@@ -100,7 +101,7 @@ export default function CartScreen() {
 
 const handleProceed = () => {
   router.push({
-    pathname: '/(customer)/payment-method',
+    pathname: '/(customer)/order-summary',
     params: { tableId, restaurantId: params.restaurantId },
   });
 };
@@ -111,6 +112,7 @@ const handleProceed = () => {
         <Header title="Shopping Cart" onBackPress={handleBackPress} showBackButton />
         <SafeAreaContainer style={styles.container}>
           <View style={styles.emptyState}>
+            <ShoppingBag size={80} color={COLORS.gray[200]} strokeWidth={1} style={{ marginBottom: SPACING.lg }} />
             <Text style={styles.emptyText}>Your cart is empty</Text>
             <Button title="Continue Shopping" onPress={() => router.back()} />
           </View>
@@ -157,7 +159,7 @@ const handleProceed = () => {
         {/* Action Buttons */}
         <View style={styles.buttonContainer}>
           <Button
-            title="Proceed to Payment"
+            title="Checkout"
             size="large"
             onPress={handleProceed}
           />

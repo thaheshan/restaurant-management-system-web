@@ -23,6 +23,7 @@ function App() {
         <Route path="/cart" element={<CartList />} />
         <Route path="/bill" element={<Bill />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/header" element={<Navigate to="/" replace />} />
         <Route path="/waiting" element={<WaitingTime />} />
         <Route path="/inventory" element={<InventoryManagement />} />
         <Route path="/expiry-alert" element={<ExpiryAlert />} />

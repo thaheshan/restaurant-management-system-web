@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
+import { ChevronLeft } from 'lucide-react-native';
 import { COLORS } from '@constants/colors';
 import { SPACING, BORDER_RADIUS, FONT_SIZES, FONT_WEIGHTS } from '@constants/spacing';
 
@@ -74,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({
         <View style={styles.leftContent}>
           {onBackPress && showBackButton && (
             <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
-              <Text style={{ fontSize: 24, color: COLORS.white }}>‹</Text>
+              <ChevronLeft size={28} color={COLORS.white} />
             </TouchableOpacity>
           )}
           <View style={styles.titleContainer}>

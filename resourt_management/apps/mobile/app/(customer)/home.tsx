@@ -12,6 +12,15 @@ import { useCustomerAuth } from '@contexts/CustomerAuthContext';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
 import Card from '@components/ui/Card';
+import { 
+  LogOut, 
+  QrCode, 
+  Menu, 
+  ShoppingBag, 
+  Timer, 
+  History,
+  Camera
+} from 'lucide-react-native';
 import { COLORS } from '@constants/colors';
 import { SPACING } from '@constants/spacing';
 
@@ -221,6 +230,7 @@ export default function HomeScreen() {
             title="Logout"
             onPress={handleLogout}
             variant="secondary"
+            icon={<LogOut size={16} color={COLORS.text.primary} />}
             style={{ paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm }}
           />
         </View>
@@ -269,7 +279,7 @@ export default function HomeScreen() {
                 marginBottom: SPACING.md,
               }}
             >
-              <Text style={{ fontSize: 40 }}>📱</Text>
+              <QrCode size={40} color={COLORS.white} strokeWidth={2} />
             </View>
 
             <Text
@@ -312,104 +322,6 @@ export default function HomeScreen() {
               style={{ width: '100%' }}
             />
           </View>
-        </View>
-
-        {/* Demo Info */}
-        <Card style={{ marginHorizontal: SPACING.md, marginBottom: SPACING.lg }}>
-          <View>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '600',
-                color: COLORS.primary,
-                marginBottom: SPACING.sm,
-              }}
-            >
-              Supported QR Code Formats:
-            </Text>
-            {[
-              '{"restaurantId":"...","tableNumber":1}',
-              'dinesmart://restaurant/rest-1/table/101',
-              'dinesmart://table/301',
-            ].map((code, idx) => (
-              <Text
-                key={idx}
-                style={{
-                  fontSize: 11,
-                  color: COLORS.text.secondary,
-                  fontFamily: 'monospace',
-                  marginBottom: SPACING.xs,
-                  paddingVertical: SPACING.xs,
-                  paddingHorizontal: SPACING.sm,
-                  backgroundColor: COLORS.surface,
-                  borderRadius: 4,
-                }}
-              >
-                {code}
-              </Text>
-            ))}
-          </View>
-        </Card>
-
-        {/* Features Section */}
-        <View style={{ paddingHorizontal: SPACING.md, marginBottom: SPACING.xl }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: '700',
-              color: COLORS.text.primary,
-              marginBottom: SPACING.md,
-            }}
-          >
-            What You Can Do
-          </Text>
-
-          {[
-            { title: 'View Menu', desc: 'Browse restaurant menu by category' },
-            { title: 'Place Order', desc: 'Add items to cart and checkout' },
-            { title: 'Track Status', desc: 'Real-time order preparation status' },
-            { title: 'View History', desc: 'Access past orders and reorder' },
-          ].map((feature, index) => (
-            <View
-              key={index}
-              style={{
-                flexDirection: 'row',
-                marginBottom: SPACING.md,
-                alignItems: 'flex-start',
-              }}
-            >
-              <View
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  backgroundColor: COLORS.primary,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginRight: SPACING.md,
-                }}
-              >
-                <Text style={{ fontSize: 16 }}>
-                  {index === 0 ? '📋' : index === 1 ? '🛒' : index === 2 ? '⏱️' : '📜'}
-                </Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '600',
-                    color: COLORS.text.primary,
-                    marginBottom: SPACING.xs,
-                  }}
-                >
-                  {feature.title}
-                </Text>
-                <Text style={{ fontSize: 12, color: COLORS.text.secondary }}>
-                  {feature.desc}
-                </Text>
-              </View>
-            </View>
-          ))}
         </View>
       </ScrollView>
     </SafeAreaContainer>
