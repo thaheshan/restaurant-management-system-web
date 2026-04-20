@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { useCustomerAuth } from '@contexts/CustomerAuthContext';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
 import Button from '@components/ui/Button';
@@ -19,7 +20,8 @@ import {
   ShoppingBag, 
   Timer, 
   History,
-  Camera
+  Camera,
+  Image as ImageIcon
 } from 'lucide-react-native';
 import { COLORS } from '@constants/colors';
 import { SPACING } from '@constants/spacing';
@@ -81,6 +83,35 @@ export default function HomeScreen() {
     } catch (error) {
       console.error('QR scan error:', error);
       Alert.alert('Error', 'Failed to process QR code');
+      setIsScanning(false);
+    }
+  };
+
+  const handleUploadQRCode = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'We need gallery permissions to upload a QR code image.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: false,
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        // expo-camera does not support scanning from image URI — guide user to use live camera
+        Alert.alert(
+          'Use Live Scanner',
+          'Please use the "Open Scanner" button to scan the QR code directly with your camera.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('QR upload error:', error);
+      Alert.alert('Error', 'Failed to process the uploaded image.');
       setIsScanning(false);
     }
   };
@@ -319,6 +350,14 @@ export default function HomeScreen() {
                   ? () => setIsScannerOpen(true)
                   : handleRequestPermission
               }
+              style={{ width: '100%', marginBottom: SPACING.md }}
+            />
+
+            <Button
+              title="Upload QR Image"
+              onPress={handleUploadQRCode}
+              variant="secondary"
+              icon={<ImageIcon size={20} color={COLORS.text.primary} />}
               style={{ width: '100%' }}
             />
           </View>

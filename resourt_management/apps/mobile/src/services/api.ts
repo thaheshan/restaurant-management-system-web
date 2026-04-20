@@ -1,5 +1,5 @@
-const BASE_URL = "https://unbrothered-gloria-noneruptive.ngrok-free.dev/api";
-const RESTAURANT_URL = "https://unbrothered-gloria-noneruptive.ngrok-free.dev/api/restaurant/public";
+const BASE_URL = "https://unplug-waged-sabotage.ngrok-free.dev/api";
+const RESTAURANT_URL = "https://unplug-waged-sabotage.ngrok-free.dev/api/restaurant/public";
 
 const tunnelFetch = async (url: string, options: any = {}) => {
   const res = await fetch(url, {
