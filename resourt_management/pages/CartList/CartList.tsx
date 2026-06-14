@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import QuantitySelector from '../../components/QuantitySelector/QuantitySelector';
 import { products } from '../../app/src/data/menuData';
@@ -14,7 +14,7 @@ interface CartItem {
 }
 
 const CartList: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Demo: pre-populate cart with first product
   const [cartItems, setCartItems] = useState<CartItem[]>([
@@ -36,7 +36,7 @@ const CartList: React.FC = () => {
   };
 
   const handleProceed = () => {
-    navigate('/waiting');
+    router.push('/waiting');
   };
 
   return (

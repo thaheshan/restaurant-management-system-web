@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import { products } from '../../app/src/data/menuData';
 import './Bill.scss';
@@ -13,7 +13,7 @@ interface OrderItem {
 }
 
 const Bill: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   // Demo order data
   const orderItems: OrderItem[] = [
@@ -36,7 +36,7 @@ const Bill: React.FC = () => {
   const grandTotal = subtotal + tax;
 
   const handleProceed = () => {
-    navigate('/payment');
+    router.push('/payment');
   };
 
   return (

@@ -1,13 +1,13 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import { categories } from '../../app/src/data/menuData';
 import './Menu.scss';
 
 const Menu: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleCategoryClick = (categoryId: string) => {
-    navigate(`/category/${categoryId}`);
+    router.push(`/category/${categoryId}`);
   };
 
   return (

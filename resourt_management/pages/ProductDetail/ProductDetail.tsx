@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { getProductById } from '../../app/src/data/menuData';
 import QuantitySelector from '../../components/QuantitySelector/QuantitySelector';
 import './ProductDetail.scss';
 
 const ProductDetail: React.FC = () => {
-  const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const productId = router.query.productId as string | undefined;
   const [quantity, setQuantity] = useState(2);
 
   const product = getProductById(productId || '');
@@ -22,7 +22,7 @@ const ProductDetail: React.FC = () => {
   }
 
   const handleAddToCart = () => {
-    navigate('/cart');
+    router.push('/cart');
   };
 
   return (
@@ -30,7 +30,7 @@ const ProductDetail: React.FC = () => {
       <div className="product-detail-page__image-section">
         <button
           className="product-detail-page__back-btn"
-          onClick={() => navigate(-1)}
+          onClick={() => router.back()}
           aria-label="Go back"
         >
           ←

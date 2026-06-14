@@ -1,17 +1,17 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import { getProductsByCategory, getCategoryById } from '../../app/src/data/menuData';
 import './CategoryMenu.scss';
 
 const CategoryMenu: React.FC = () => {
-  const { categoryId } = useParams<{ categoryId: string }>();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const categoryId = router.query.categoryId as string | undefined;
 
   const category = getCategoryById(categoryId || '');
   const products = getProductsByCategory(categoryId || '');
 
   const handleAddToCart = (productId: string) => {
-    navigate(`/product/${productId}`);
+    router.push(`/product/${productId}`);
   };
 
   if (!category) {
