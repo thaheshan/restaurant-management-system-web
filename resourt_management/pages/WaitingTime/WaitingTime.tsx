@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import './WaitingTime.scss';
 
@@ -16,7 +16,7 @@ const steps: Step[] = [
 ];
 
 const WaitingTime: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [minutes, setMinutes] = useState(15);
   const [seconds, setSeconds] = useState(0);
@@ -56,7 +56,7 @@ const WaitingTime: React.FC = () => {
   }, []);
 
   const handleProceedToBill = () => {
-    navigate('/bill');
+    router.push('/bill');
   };
 
   const pad = (n: number) => n.toString().padStart(2, '0');

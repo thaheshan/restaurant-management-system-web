@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import { FaMoneyBillWave, FaCreditCard, FaRegCreditCard } from 'react-icons/fa';
 import './Payment.scss';
@@ -35,14 +35,14 @@ const paymentOptions: PaymentOption[] = [
 ];
 
 const Payment: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('debit');
   const [promoCode, setPromoCode] = useState('');
 
   const grandTotal = 4400; // from Bill page (demo)
 
   const handleConfirm = () => {
-    navigate('/waiting');
+    router.push('/waiting');
   };
 
   return (
