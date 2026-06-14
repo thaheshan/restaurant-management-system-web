@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
-import { products } from '../../../resourt-web/src/data/menuData';
+import { products } from '../../app/src/data/menuData';
 import './Bill.scss';
 
 interface OrderItem {

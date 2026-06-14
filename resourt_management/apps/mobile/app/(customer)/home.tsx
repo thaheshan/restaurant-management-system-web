@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import * as ImagePicker from 'expo-image-picker';
 import { useCustomerAuth } from '@contexts/CustomerAuthContext';
 import SafeAreaContainer from '@components/layout/SafeAreaContainer';
@@ -102,12 +103,25 @@ export default function HomeScreen() {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        // expo-camera does not support scanning from image URI — guide user to use live camera
-        Alert.alert(
-          'Use Live Scanner',
-          'Please use the "Open Scanner" button to scan the QR code directly with your camera.',
-          [{ text: 'OK' }]
-        );
+        setIsScanning(true);
+        const { uri } = result.assets[0];
+        
+        try {
+          // Use BarCodeScanner to scan from the image URI
+          const scanResults = await BarCodeScanner.scanFromURLAsync(uri, [BarCodeScanner.Constants.BarCodeType.qr]);
+          
+          if (scanResults && scanResults.length > 0) {
+            const qrData = scanResults[0].data;
+            handleBarCodeScanned({ data: qrData });
+          } else {
+            Alert.alert('No QR Code Found', 'We could not detect a valid QR code in this image.');
+            setIsScanning(false);
+          }
+        } catch (e) {
+          console.error('Scan from URI error:', e);
+          Alert.alert('Detection Failed', 'We could not detect a valid QR code in this image. Please try a clearer picture or use the live scanner.');
+          setIsScanning(false);
+        }
       }
     } catch (error) {
       console.error('QR upload error:', error);

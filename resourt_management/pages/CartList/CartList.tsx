@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import QuantitySelector from '../../components/QuantitySelector/QuantitySelector';
-import { products } from '../../../resourt-web/src/data/menuData';
+import { products } from '../../app/src/data/menuData';
 import './CartList.scss';
 
 interface CartItem {

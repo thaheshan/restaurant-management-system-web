@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
-import { getProductsByCategory, getCategoryById } from '../../../resourt-web/src/data/menuData';
+import { getProductsByCategory, getCategoryById } from '../../app/src/data/menuData';
 import './CategoryMenu.scss';
 
 const CategoryMenu: React.FC = () => {

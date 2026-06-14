@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
-import { categories } from '../../../resourt-web/src/data/menuData';
+import { categories } from '../../app/src/data/menuData';
 import './Menu.scss';
 
 const Menu: React.FC = () => {

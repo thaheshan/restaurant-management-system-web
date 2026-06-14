@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProductById } from '../../../resourt-web/src/data/menuData';
+import { getProductById } from '../../app/src/data/menuData';
 import QuantitySelector from '../../components/QuantitySelector/QuantitySelector';
 import './ProductDetail.scss';
 
