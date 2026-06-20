@@ -32,22 +32,19 @@ const Login = () => {
     <div className="login-root">
       <div className="login-left">
         <div className="login-left__overlay" />
-        <div className="login-left__brand">
-          <span className="brand-icon">🍽</span>
-          <span className="brand-name">DineSmart</span>
+        <div className="login-left__brand" onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
+          <img src="/futura_logo.png" alt="Futura Resorts" style={{ height: '52px', width: 'auto', objectFit: 'contain' }} />
+          <span className="brand-name">Futura Resorts</span>
         </div>
         <div className="login-left__tagline">
           <h2>Smart Kitchen.<br />Zero Waste.<br />Full Compliance.</h2>
-          <p>Your all-in-one restaurant management platform.</p>
+          <p>Your all-in-one resort management platform.</p>
         </div>
       </div>
 
       <div className="login-right">
         <div className="login-card">
           <div className="login-card__header">
-            <div className="login-card__logo">
-              <span>DS</span>
-            </div>
             <h1>Welcome Back!</h1>
             <p>Enter your credentials to access your account</p>
           </div>
@@ -142,7 +139,7 @@ const Login = () => {
           </form>
 
           <p className="login-footer">
-            Don't have an account? <a href="#">Contact your admin</a>
+            Don't have an account? <span onClick={() => router.push('/signup/role-selection')} style={{ color: '#27ae60', cursor: 'pointer', fontWeight: 600 }}>Sign Up</span>
           </p>
         </div>
       </div>

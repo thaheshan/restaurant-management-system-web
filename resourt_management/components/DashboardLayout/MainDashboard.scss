@@ -1,7 +1,27 @@
+:root {
+  --dash-bg: #f4f5f7;
+  --dash-sidebar-bg: #2d5a3d;
+  --dash-card-bg: #ffffff;
+  --dash-border: rgba(255, 255, 255, 0.12);
+  --dash-text: #1a202c;
+  --header-bg: #004a35;
+  --header-text: #ffffff;
+}
+
+.dark {
+  --dash-bg: #0d1117;
+  --dash-sidebar-bg: #161b22;
+  --dash-card-bg: #161b22;
+  --dash-border: #30363d;
+  --dash-text: #c9d1d9;
+  --header-bg: #161b22;
+  --header-text: #e2e8f0;
+}
+
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
-  background: #f4f5f7;
+  background: var(--dash-bg);
   gap: 0;
   margin: 0;
   padding: 0;
@@ -10,7 +30,7 @@
 .dashboard-sidebar {
   width: 230px;
   min-height: 100vh;
-  background: #2d5a3d;
+  background: var(--dash-sidebar-bg);
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -131,7 +151,7 @@
 
 .dashboard-main {
   flex: 1;
-  margin-left: 230px;
+  margin-left: 220px;
   margin-top: 0;
   padding-top: 0;
   min-width: 0;

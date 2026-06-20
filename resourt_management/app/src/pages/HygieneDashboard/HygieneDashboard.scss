@@ -62,7 +62,7 @@
   svg { width: 16px; height: 16px; }
 
   &:hover {
-    background: color.adjust($color-primary, $lightness: -5%);
+    background: $color-primary-dark;
     transform: translateY(-1px);
   }
 }

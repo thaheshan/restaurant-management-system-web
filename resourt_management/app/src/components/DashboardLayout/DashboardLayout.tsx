@@ -38,8 +38,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   return (
     <div className="dashboard-layout">
       <aside className="dashboard-sidebar">
-        <div className="dashboard-sidebar__top">
-          <h1 className="dashboard-sidebar__logo">DineSmart</h1>
+        <div className="dashboard-sidebar__top" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 20px', borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }}>
+          <img src="/futura_logo.png" alt="Futura Resorts" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
+          <h1 className="dashboard-sidebar__logo" style={{ margin: 0, padding: 0, fontSize: '16px', fontWeight: 'bold', borderBottom: 'none' }}>Futura Resorts</h1>
 
           <nav className="dashboard-sidebar__nav">
             {navItems.map((item) => (

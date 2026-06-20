@@ -129,3 +129,15 @@
     overflow-x: hidden; /* ← add this */
   }
 }
+
+.nav-logo-img {
+  height: 60px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+.splash-logo-img {
+  height: 180px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}

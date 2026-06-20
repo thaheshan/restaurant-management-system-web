@@ -49,8 +49,9 @@ const Sidebar = ({ activePath, onNavigate }: SidebarProps) => {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar__brand">
-        <span className="sidebar__brand-name">DineSmart</span>
+      <div className="sidebar__brand" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '20px 20px', cursor: 'pointer' }} onClick={() => router.push('/')}>
+        <img src="/futura_logo.png" alt="Futura Resorts" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} />
+        <span className="sidebar__brand-name" style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>Futura Resorts</span>
       </div>
       <nav className="sidebar__nav">
         {navItems.map(item => (

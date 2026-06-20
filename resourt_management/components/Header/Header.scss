@@ -1,7 +1,9 @@
 .dinesmart-header {
   background-color: #2d5a3d;
   padding: 18px 32px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 

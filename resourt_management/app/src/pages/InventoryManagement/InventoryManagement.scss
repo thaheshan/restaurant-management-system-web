@@ -92,7 +92,7 @@
   transition: background 0.2s, transform 0.15s;
   box-shadow: 0 3px 12px rgba($color-primary, 0.3);
   white-space: nowrap;
-  &:hover { background: color.adjust($color-primary, $lightness: -5%); transform: translateY(-1px); }
+  &:hover { background: $color-primary-dark; transform: translateY(-1px); }
 }
 
 .btn-update {
@@ -350,7 +350,7 @@
   padding: 0.65rem 1.4rem; background: $color-primary; color: #fff; border: none;
   border-radius: $radius-md; font-family: $font-display; font-size: 0.88rem;
   font-weight: 600; cursor: pointer; transition: background 0.2s;
-  &:hover { background: color.adjust($color-primary, $lightness: -5%); }
+  &:hover { background: $color-primary-dark; }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
   &.btn-danger { background: #e74c3c; &:hover { background: color.adjust(#e74c3c, $lightness: -5%); } }
 }

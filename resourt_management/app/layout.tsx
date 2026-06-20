@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ReduxProvider from '@/app/src/store/ReduxProvider'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const geist = Geist({ subsets: ["latin"] });
@@ -27,13 +28,20 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" style={{ margin: 0, padding: 0 }}>
+    <html lang="en" style={{ margin: 0, padding: 0 }} suppressHydrationWarning>
       <body
         className={`${geist.className} ${geistMono.className} antialiased`}
         style={{ margin: 0, padding: 0, overflowX: 'hidden' }}
       >
         <ReduxProvider>
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </ReduxProvider>
         <Analytics />
       </body>

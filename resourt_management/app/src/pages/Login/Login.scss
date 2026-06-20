@@ -12,7 +12,7 @@
 .login-left {
   position: relative;
   width: 45%;
-  background: url('/login-bg.png') center/cover no-repeat;
+  background: url('/login_food_banner.png') center/cover no-repeat;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -244,7 +244,7 @@
   svg { width: 16px; height: 16px; }
 
   &:hover:not(:disabled) {
-    background: color.adjust($color-primary, $lightness: -6%);
+    background: $color-primary-dark;
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba($color-primary, 0.4);
   }
