@@ -87,6 +87,22 @@ export const loginUser = createAsyncThunk(
     { email, password }: { email: string; password: string },
     { rejectWithValue }
   ) => {
+    // ── Demo fallback (works without a live backend) ──
+    if (email === 'admin@dinesmart.com' && password === 'admin123') {
+      const demoSession = {
+        token: 'demo-token-futura-resorts',
+        user: {
+          id: 'demo-admin-001',
+          email: 'admin@dinesmart.com',
+          name: 'Admin User',
+          role: 'admin',
+          restaurantId: 'demo-restaurant-001',
+        },
+      };
+      localStorage.setItem('adminSession', JSON.stringify(demoSession));
+      return demoSession;
+    }
+
     try {
       const res = await authService.adminLogin(email, password);
       localStorage.setItem('adminSession', JSON.stringify(res));
